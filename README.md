@@ -1,0 +1,1 @@
+# S84-0126-The-Minimalists-Full-Stack-With-Nextjs-And-AWS-Azure-Sampark
