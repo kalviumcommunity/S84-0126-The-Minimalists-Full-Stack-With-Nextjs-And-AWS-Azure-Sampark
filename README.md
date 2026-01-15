@@ -78,6 +78,62 @@ Day 20
 Backend architecture explanation
 
 
+MEMBER 3 — DevOps, Cloud & CI/CD Owner
+Responsibilities
+
+Repository & branching strategy
+
+
+Dockerization & environment setup
+
+
+CI/CD pipelines
+
+
+Cloud deployment & monitoring
+
+
+Sprint Contribution
+Days 1–5
+
+
+Repository setup & branch protection
+
+
+PR workflow & CI skeleton
+
+
+Environment configuration strategy
+
+
+Days 6–15
+
+
+Docker & Docker Compose setup
+
+
+Secrets management
+
+
+Cloud database & object storage setup
+
+
+Days 16–19
+
+
+Deployment to AWS / Azure
+
+
+Logging & monitoring
+
+
+Domain & SSL configuration
+
+
+Day 20
+
+
+Live deployment demo & infra explanation
 
 
 ## 🚀 Getting Started
@@ -119,4 +175,4 @@ Node.js 18+ • Docker • PostgreSQL • Redis • AWS/Azure account
    Visit [http://localhost:3000](http://localhost:3000)
 
 
----
+
