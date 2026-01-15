@@ -78,6 +78,42 @@ Day 20
 Backend architecture explanation
 
 
+### MEMBER 2 — Frontend & UX Owner
+Responsibilities
+
+Citizen-facing UI
+
+Admin dashboard UI
+
+App structure & routing
+
+UX, accessibility & responsiveness
+
+Sprint Contribution
+
+Days 1–5
+
+Wireframes & UI flow
+
+Folder structure & routing plan
+
+Days 6–15
+
+Complaint submission UI
+
+Complaint list & status tracking
+
+Toasts, modals, loading & error states
+
+Days 16–19
+
+UI polish & responsiveness
+
+Accessibility & theme refinements
+
+Day 20
+
+Live demo walkthrough (UI flow)
 
 
 ## 🚀 Getting Started
