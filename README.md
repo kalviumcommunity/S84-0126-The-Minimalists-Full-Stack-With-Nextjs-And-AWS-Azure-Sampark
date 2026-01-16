@@ -77,62 +77,54 @@ Unit & integration testing
 Day 20  
 Backend architecture explanation
 
-
-MEMBER 3 — DevOps, Cloud & CI/CD Owner
+### MEMBER 2 — Frontend & UX Owner
 Responsibilities
-
-Repository & branching strategy
-
-
-Dockerization & environment setup
-
-
-CI/CD pipelines
-
-
-Cloud deployment & monitoring
-
-
+Citizen-facing UI
+Admin dashboard UI
+App structure & routing
+UX, accessibility & responsiveness
 Sprint Contribution
+
 Days 1–5
-
-
-Repository setup & branch protection
-
-
-PR workflow & CI skeleton
-
-
-Environment configuration strategy
-
+Wireframes & UI flow
+Folder structure & routing plan
 
 Days 6–15
-
-
-Docker & Docker Compose setup
-
-
-Secrets management
-
-
-Cloud database & object storage setup
-
+Complaint submission UI
+Complaint list & status tracking
+Toasts, modals, loading & error states
 
 Days 16–19
-
-
-Deployment to AWS / Azure
-
-
-Logging & monitoring
-
-
-Domain & SSL configuration
-
+UI polish & responsiveness
+Accessibility & theme refinements
 
 Day 20
+Live demo walkthrough (UI flow)
 
+### MEMBER 3 — DevOps, Cloud & CI/CD Owner
+Responsibilities
+Repository & branching strategy
+Dockerization & environment setup
+CI/CD pipelines
+Cloud deployment & monitoring
+Sprint Contribution
 
+Days 1–5
+Repository setup & branch protection
+PR workflow & CI skeleton
+Environment configuration strategy
+
+Days 6–15
+Docker & Docker Compose setup
+Secrets management
+Cloud database & object storage setup
+
+Days 16–19
+Deployment to AWS / Azure
+Logging & monitoring
+Domain & SSL configuration
+
+Day 20
 Live deployment demo & infra explanation.
 
 
