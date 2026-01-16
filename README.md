@@ -133,7 +133,7 @@ Domain & SSL configuration
 Day 20
 
 
-Live deployment demo & infra explanation
+Live deployment demo & infra explanation.
 
 
 ## 🚀 Getting Started
