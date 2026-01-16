@@ -78,42 +78,62 @@ Day 20
 Backend architecture explanation
 
 
-### MEMBER 2 — Frontend & UX Owner
+MEMBER 3 — DevOps, Cloud & CI/CD Owner
 Responsibilities
 
-Citizen-facing UI
+Repository & branching strategy
 
-Admin dashboard UI
 
-App structure & routing
+Dockerization & environment setup
 
-UX, accessibility & responsiveness
+
+CI/CD pipelines
+
+
+Cloud deployment & monitoring
+
 
 Sprint Contribution
-
 Days 1–5
 
-Wireframes & UI flow
 
-Folder structure & routing plan
+Repository setup & branch protection
+
+
+PR workflow & CI skeleton
+
+
+Environment configuration strategy
+
 
 Days 6–15
 
-Complaint submission UI
 
-Complaint list & status tracking
+Docker & Docker Compose setup
 
-Toasts, modals, loading & error states
+
+Secrets management
+
+
+Cloud database & object storage setup
+
 
 Days 16–19
 
-UI polish & responsiveness
 
-Accessibility & theme refinements
+Deployment to AWS / Azure
+
+
+Logging & monitoring
+
+
+Domain & SSL configuration
+
 
 Day 20
 
-Live demo walkthrough (UI flow)
+
+Live deployment demo & infra explanation.
 
 
 ## 🚀 Getting Started
@@ -155,4 +175,4 @@ Node.js 18+ • Docker • PostgreSQL • Redis • AWS/Azure account
    Visit [http://localhost:3000](http://localhost:3000)
 
 
----
+
