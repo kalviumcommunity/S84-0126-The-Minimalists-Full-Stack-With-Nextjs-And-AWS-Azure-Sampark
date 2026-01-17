@@ -167,4 +167,84 @@ Node.js 18+ • Docker • PostgreSQL • Redis • AWS/Azure account
    Visit [http://localhost:3000](http://localhost:3000)
 
 
+## 🔧 Code Quality & Configuration
+
+### TypeScript Strict Mode
+We've enabled strict TypeScript configuration to catch potential errors early and ensure type safety:
+
+**Enabled Compiler Options:**
+- **`strict: true`** - Enables all strict type-checking options
+- **`noImplicitAny: true`** - Prevents using `any` type implicitly, forcing explicit type declarations
+- **`noUnusedLocals: true`** - Reports errors on unused local variables
+- **`noUnusedParameters: true`** - Reports errors on unused function parameters  
+- **`forceConsistentCasingInFileNames: true`** - Ensures consistent file name casing across imports
+
+**Why Strict Mode?**
+- 🐛 Catches bugs at compile-time instead of runtime
+- 📝 Improves code documentation through explicit types
+- 🔍 Makes refactoring safer with better IDE support
+- 👥 Enhances team collaboration with clear contracts
+
+### ESLint & Prettier Configuration
+
+**ESLint Rules:**
+- **`no-console: "warn"`** - Warns about console.log statements (should use proper logging)
+- **`semi: "error"`** - Enforces semicolons at end of statements
+- **`quotes: "error"`** - Enforces double quotes for consistency
+
+**Prettier Settings:**
+- **`singleQuote: false`** - Use double quotes
+- **`semi: true`** - Add semicolons
+- **`tabWidth: 2`** - 2 spaces for indentation
+- **`trailingComma: "es5"`** - Trailing commas where valid in ES5
+
+**Benefits:**
+- ✨ Consistent code formatting across the team
+- 🚫 Prevents common JavaScript pitfalls
+- ⚡ Auto-fixes issues on save
+- 🤝 Reduces code review friction
+
+### Pre-Commit Hooks (Husky + lint-staged)
+
+We use Husky and lint-staged to automatically run ESLint and Prettier before every commit:
+
+**What happens on commit:**
+1. Git detects staged `.ts`, `.tsx`, `.js`, `.jsx` files
+2. Runs `eslint --fix` to auto-fix linting issues
+3. Runs `prettier --write` to format code
+4. If errors remain, commit is blocked until fixed
+
+**Setup:**
+```bash
+# Husky hooks location
+.husky/pre-commit
+
+# lint-staged configuration in package.json
+"lint-staged": {
+  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"]
+}
+```
+
+**Why Pre-Commit Hooks?**
+- 🛡️ Ensures only quality code reaches the repository
+- 🔄 Maintains consistency automatically
+- 💪 Builds good habits without manual effort
+- 🚀 Speeds up PR reviews
+
+### Testing the Configuration
+
+**Run ESLint manually:**
+```bash
+cd sampark
+npx eslint src/ --ext .ts,.tsx
+```
+
+**Format with Prettier:**
+```bash
+npx prettier --write "src/**/*.{ts,tsx}"
+```
+
+**Test pre-commit hook:**
+Try committing code with a lint error - it should auto-fix or block until resolved.
+
 
