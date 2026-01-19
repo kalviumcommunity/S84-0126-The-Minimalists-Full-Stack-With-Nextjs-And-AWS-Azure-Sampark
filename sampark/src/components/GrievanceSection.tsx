@@ -1,14 +1,8 @@
-
-
-
-
-
-
-import { motion } from 'framer-motion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import GrievanceForm from './GrievanceForm';
-import StatusTracker from './StatusTracker';
-import { FileText, Search } from 'lucide-react';
+import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import GrievanceForm from "./GrievanceForm";
+import StatusTracker from "./StatusTracker";
+import { FileText, Search } from "lucide-react";
 
 export default function GrievanceSection() {
   return (
@@ -16,7 +10,7 @@ export default function GrievanceSection() {
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      
+
       <div className="section-container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
