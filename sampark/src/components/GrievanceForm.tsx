@@ -1,4 +1,4 @@
-mport { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle, Upload, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
@@ -32,7 +32,7 @@ export default function GrievanceForm() {
     // Store in localStorage for tracking demo
     localStorage.setItem(id, JSON.stringify({
       status: 'Submitted',
-      updates: [Submitted on ${new Date().toLocaleString()}],
+      updates: [`Submitted on ${new Date().toLocaleString()}`],
       ...formData,
     }));
 

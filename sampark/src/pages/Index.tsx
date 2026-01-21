@@ -6,7 +6,7 @@ import FeaturesSection from '@/components/FeaturesSection';
 import GrievanceSection from '@/components/GrievanceSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
-import Chatbot from '@/components/Chatbot';
+import Chatbox from '@/components/Chatbox';
 
 const Index = () => {
   return (
@@ -19,7 +19,7 @@ const Index = () => {
       <GrievanceSection />
       <ContactSection />
       <Footer />
-      <Chatbot />
+      <Chatbox />
     </div>
   );
 };
