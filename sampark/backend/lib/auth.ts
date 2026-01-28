@@ -15,3 +15,22 @@ const generateToken = (userId) => jwt.sign({ userId }, JWT_SECRET, { expiresIn: 
 
 // Simple token verification function (for direct use)
 const verifyTokenSimple = (token) => jwt.verify(token, JWT_SECRET);
+
+const verifyToken = (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+    
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = { id: decoded.userId };
+    next();
+  } catch (error) {
+    console.error("Token verification error:", error);
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
+};
+
+export { hashPassword, comparePassword, generateToken, verifyToken, verifyTokenSimple };
