@@ -30,7 +30,7 @@ export default function Footer() {
           </nav>
 
           <p className="text-sm text-white/60">
-            ©️ 2026 Sampark. All rights reserved.
+            © 2026 Sampark. All rights reserved.
           </p>
         </div>
       </div>

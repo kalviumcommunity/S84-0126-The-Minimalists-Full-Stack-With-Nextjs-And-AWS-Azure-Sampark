@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toasts";
+import { useToast } from "@/hooks/use-toast";
 import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from "@/components/ui/toast";
 
 export function Toaster() {
@@ -13,7 +13,7 @@ export function Toaster() {
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && <ToastDescription>{description}</ToastDescription>}
             </div>
-            {action}ge
+            {action}
             <ToastClose />
           </Toast>
         );

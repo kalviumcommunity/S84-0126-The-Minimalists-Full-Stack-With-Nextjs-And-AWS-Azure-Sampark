@@ -1,27 +1,72 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Search, Clock, CheckCircle2, AlertCircle, Loader2, XCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
-interface TrackingData {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+interface StatusHistory {
+  id: string;
   status: string;
-  updates: string[];
-  name?: string;
-  category?: string;
-  location?: string;
+  comment: string | null;
+  createdAt: string;
+}
+
+interface TrackingData {
+  id: string;
+  trackingId: string;
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  priority: string;
+  images: string[];
+  createdAt: string;
+  statuses: StatusHistory[];
+  user?: {
+    name: string;
+    email: string;
+  };
 }
 
 const statusIcons = {
-  Submitted: Clock,
-  'In Progress': Loader2,
-  Resolved: CheckCircle2,
+  SUBMITTED: Clock,
+  UNDER_REVIEW: Loader2,
+  IN_PROGRESS: Loader2,
+  RESOLVED: CheckCircle2,
+  REJECTED: XCircle,
 };
 
 const statusColors = {
-  Submitted: 'bg-amber-100 text-amber-700',
-  'In Progress': 'bg-blue-100 text-blue-700',
-  Resolved: 'bg-green-100 text-green-700',
+  SUBMITTED: 'bg-amber-100 text-amber-700',
+  UNDER_REVIEW: 'bg-blue-100 text-blue-700',
+  IN_PROGRESS: 'bg-purple-100 text-purple-700',
+  RESOLVED: 'bg-green-100 text-green-700',
+  REJECTED: 'bg-red-100 text-red-700',
+};
+
+const statusLabels = {
+  SUBMITTED: 'Submitted',
+  UNDER_REVIEW: 'Under Review',
+  IN_PROGRESS: 'In Progress',
+  RESOLVED: 'Resolved',
+  REJECTED: 'Rejected',
+};
+
+const categoryLabels: Record<string, string> = {
+  POTHOLES: '🚧 Potholes',
+  WASTE: '🗑️ Waste Management',
+  WATER: '💧 Water Supply',
+  ELECTRICITY: '⚡ Electricity',
+  DRAINAGE: '🌊 Drainage',
+  OTHER: '📋 Other',
+};
+
+const priorityLabels: Record<string, string> = {
+  LOW: '🟢 Low',
+  MEDIUM: '🟡 Medium',
+  HIGH: '🔴 High',
 };
 
 export default function StatusTracker() {
@@ -37,39 +82,29 @@ export default function StatusTracker() {
     setError(null);
     setTrackingData(null);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(`${API_URL}/api/grievance/track/${trackingId.trim().toUpperCase()}`, {
+        credentials: 'include',
+      });
 
-    const data = localStorage.getItem(trackingId.trim().toUpperCase());
-    
-    if (data) {
-      const parsed = JSON.parse(data);
-      setTrackingData(parsed);
-      
-      // Simulate status update after 3 seconds
-      if (parsed.status === 'Submitted') {
-        setTimeout(() => {
-          const updated = {
-            ...parsed,
-            status: 'In Progress',
-            updates: [
-              ...parsed.updates,
-              `Assigned to field team on ${new Date().toLocaleString()}`,
-            ],
-          };
-          localStorage.setItem(trackingId.trim().toUpperCase(), JSON.stringify(updated));
-          setTrackingData(updated);
-        }, 3000);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setTrackingData(data.grievance);
+      } else {
+        setError(data.error || 'Invalid Tracking ID. Please check and try again.');
       }
-    } else {
-      setError('Invalid Tracking ID. Please check and try again.');
+    } catch (err) {
+      console.error('Error tracking grievance:', err);
+      setError('Failed to track grievance. Please try again.');
+    } finally {
+      setIsSearching(false);
     }
-
-    setIsSearching(false);
   };
 
-  const StatusIcon = trackingData ? statusIcons[trackingData.status as keyof typeof statusIcons] || AlertCircle : null;
-  const statusColor = trackingData ? statusColors[trackingData.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-700' : '';
+  const currentStatus = trackingData?.statuses[0]?.status || 'SUBMITTED';
+  const StatusIcon = statusIcons[currentStatus as keyof typeof statusIcons] || AlertCircle;
+  const statusColor = statusColors[currentStatus as keyof typeof statusColors] || 'bg-gray-100 text-gray-700';
 
   return (
     <div className="space-y-6">
@@ -121,51 +156,82 @@ export default function StatusTracker() {
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Tracking ID</p>
                 <p className="font-display text-lg font-bold text-foreground">
-                  {trackingId.toUpperCase()}
+                  {trackingData.trackingId}
                 </p>
               </div>
               <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusColor}`}>
-                {StatusIcon && (
-                  <StatusIcon className={`w-4 h-4 ${trackingData.status === 'In Progress' ? 'animate-spin' : ''}`} />
-                )}
-                <span className="font-medium text-sm">{trackingData.status}</span>
+                <StatusIcon className={`w-4 h-4 ${currentStatus === 'IN_PROGRESS' || currentStatus === 'UNDER_REVIEW' ? 'animate-spin' : ''}`} />
+                <span className="font-medium text-sm">
+                  {statusLabels[currentStatus as keyof typeof statusLabels]}
+                </span>
               </div>
             </div>
 
-            {(trackingData.category || trackingData.location) && (
-              <div className="grid sm:grid-cols-2 gap-4 mb-6 p-4 rounded-lg bg-secondary/50">
-                {trackingData.category && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Category</p>
-                    <p className="text-sm font-medium text-foreground capitalize">
-                      {trackingData.category}
-                    </p>
-                  </div>
-                )}
-                {trackingData.location && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Location</p>
-                    <p className="text-sm font-medium text-foreground">
-                      {trackingData.location}
-                    </p>
-                  </div>
-                )}
+            <div className="mb-6">
+              <h3 className="font-semibold text-foreground mb-2">{trackingData.title}</h3>
+              <p className="text-sm text-muted-foreground">{trackingData.description}</p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-4 mb-6 p-4 rounded-lg bg-secondary/50">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Category</p>
+                <p className="text-sm font-medium text-foreground">
+                  {categoryLabels[trackingData.category] || trackingData.category}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Priority</p>
+                <p className="text-sm font-medium text-foreground">
+                  {priorityLabels[trackingData.priority] || trackingData.priority}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Location</p>
+                <p className="text-sm font-medium text-foreground">
+                  {trackingData.location}
+                </p>
+              </div>
+            </div>
+
+            {trackingData.images && trackingData.images.length > 0 && (
+              <div className="mb-6">
+                <p className="text-sm font-medium text-foreground mb-3">Attached Images</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {trackingData.images.map((img, index) => (
+                    <img
+                      key={index}
+                      src={img}
+                      alt={`Evidence ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg"
+                    />
+                  ))}
+                </div>
               </div>
             )}
 
             <div>
-              <p className="text-sm font-medium text-foreground mb-3">Timeline</p>
+              <p className="text-sm font-medium text-foreground mb-3">Status Timeline</p>
               <div className="space-y-3">
-                {trackingData.updates.map((update, index) => (
+                {trackingData.statuses.map((update, index) => (
                   <motion.div
-                    key={index}
+                    key={update.id}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-start gap-3"
+                    className="flex items-start gap-3 pb-3 border-b border-border last:border-0"
                   >
                     <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <p className="text-sm text-muted-foreground">{update}</p>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground">
+                        {statusLabels[update.status as keyof typeof statusLabels] || update.status}
+                      </p>
+                      {update.comment && (
+                        <p className="text-sm text-muted-foreground mt-1">{update.comment}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(update.createdAt).toLocaleString()}
+                      </p>
+                    </div>
                   </motion.div>
                 ))}
               </div>
