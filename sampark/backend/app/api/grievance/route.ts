@@ -2,16 +2,18 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { verifyToken } from '../../../lib/auth.js';
 import {
+  saveFormData,
+  getFormData,
   clearFormData,
+  cacheUserGrievances,
+  getCachedUserGrievances,
   invalidateUserGrievancesCache
 } from '../../../lib/redis.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-/**
- * Generates a unique tracking ID: SMPK + 5 random digits + last 4 of timestamp
- */
+// Generate unique tracking ID
 function generateTrackingId() {
   const prefix = "SMPK";
   const randomNum = Math.floor(10000 + Math.random() * 90000);
@@ -19,32 +21,39 @@ function generateTrackingId() {
   return `${prefix}${randomNum}${timestamp}`;
 }
 
-// POST: Submit a new grievance
+// Submit a new grievance
 router.post("/submit", verifyToken, async (req, res) => {
   try {
     const { title, description, category, location, latitude, longitude, images, priority } = req.body;
     
-    // 1. Authorization Guard
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ error: "Unauthorized: User session not found" });
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
     }
+    
     const userId = req.user.id;
 
-    // 2. Input Validation
+    // Validate required fields
     if (!title || !description || !category || !location) {
-      return res.status(400).json({ error: "Missing required fields: title, description, category, and location are mandatory." });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // 3. Unique Tracking ID Collision Handling
-    let trackingId;
+    // Generate unique tracking ID
+    let trackingId = generateTrackingId();
     let isUnique = false;
+    
+    // Ensure tracking ID is unique
     while (!isUnique) {
-      trackingId = generateTrackingId();
-      const existing = await prisma.grievance.findUnique({ where: { trackingId } });
-      if (!existing) isUnique = true;
+      const existing = await prisma.grievance.findUnique({
+        where: { trackingId }
+      });
+      if (!existing) {
+        isUnique = true;
+      } else {
+        trackingId = generateTrackingId();
+      }
     }
 
-    // 4. Database Transaction
+    // Create grievance
     const grievance = await prisma.grievance.create({
       data: {
         trackingId,
@@ -52,10 +61,9 @@ router.post("/submit", verifyToken, async (req, res) => {
         description,
         category: category.toUpperCase(),
         location,
-        // Ensure coordinates are valid numbers or null
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
-        images: Array.isArray(images) ? images : [],
+        images: images || [],
         priority: priority || "MEDIUM",
         userId,
         statuses: {
@@ -72,27 +80,246 @@ router.post("/submit", verifyToken, async (req, res) => {
       }
     });
 
-    // 5. Cache Management
-    // Wrapped in try/catch or checked to prevent the whole request failing if Redis is down
-    try {
-      if (typeof clearFormData === 'function') await clearFormData(userId);
-      if (typeof invalidateUserGrievancesCache === 'function') await invalidateUserGrievancesCache(userId);
-    } catch (cacheError) {
-      console.warn("Redis Cache Invalidation Failed:", cacheError.message);
-      // We don't return an error to the user here because the DB write was successful
-    }
+    // Clear form cache after successful submission
+    await clearFormData(userId);
+    
+    // Invalidate grievances cache so it fetches fresh data
+    await invalidateUserGrievancesCache(userId);
 
-    // 6. Success Response
     res.status(201).json({
       success: true,
-      message: "Grievance submitted successfully",
       trackingId: grievance.trackingId,
-      data: grievance
+      grievance
+    });
+  } catch (error) {
+    console.error("Error submitting grievance:", error);
+    res.status(500).json({ error: "Failed to submit grievance" });
+  }
+});
+
+// Track grievance by tracking ID
+router.get("/track/:trackingId", async (req, res) => {
+  try {
+    const { trackingId } = req.params;
+
+    const grievance = await prisma.grievance.findUnique({
+      where: { trackingId: trackingId.toUpperCase() },
+      include: {
+        statuses: {
+          orderBy: { createdAt: "desc" }
+        },
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
     });
 
+    if (!grievance) {
+      return res.status(404).json({ error: "Grievance not found" });
+    }
+
+    res.json({
+      success: true,
+      grievance
+    });
   } catch (error) {
-    console.error("Critical Error submitting grievance:", error);
-    res.status(500).json({ error: "An internal server error occurred while processing your request." });
+    console.error("Error tracking grievance:", error);
+    res.status(500).json({ error: "Failed to track grievance" });
+  }
+});
+
+// Get all grievances for logged-in user
+router.get("/my-grievances", verifyToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    const userId = req.user.id;
+
+    // Try to get from cache first
+    const cachedGrievances = await getCachedUserGrievances(userId);
+    
+    if (cachedGrievances) {
+      return res.json({
+        success: true,
+        grievances: cachedGrievances,
+        cached: true
+      });
+    }
+
+    // If not in cache, fetch from database
+    const grievances = await prisma.grievance.findMany({
+      where: { userId },
+      include: {
+        statuses: {
+          orderBy: { createdAt: "desc" },
+          take: 1 // Get only the latest status
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    // Cache the result for 12 hours
+    await cacheUserGrievances(userId, grievances);
+
+    res.json({
+      success: true,
+      grievances,
+      cached: false
+    });
+  } catch (error) {
+    console.error("Error fetching grievances:", error);
+    res.status(500).json({ error: "Failed to fetch grievances" });
+  }
+});
+
+// Get single grievance details
+router.get("/:id", verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    const userId = req.user.id;
+
+    const grievance = await prisma.grievance.findFirst({
+      where: {
+        id,
+        userId // Ensure user can only view their own grievances
+      },
+      include: {
+        statuses: {
+          orderBy: { createdAt: "desc" }
+        }
+      }
+    });
+
+    if (!grievance) {
+      return res.status(404).json({ error: "Grievance not found" });
+    }
+
+    res.json({
+      success: true,
+      grievance
+    });
+  } catch (error) {
+    console.error("Error fetching grievance:", error);
+    res.status(500).json({ error: "Failed to fetch grievance" });
+  }
+});
+
+// Update grievance status (for admin - future use)
+router.post("/:id/status", verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, comment } = req.body;
+
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    if (!status) {
+      return res.status(400).json({ error: "Status is required" });
+    }
+
+    // Add status update
+    const statusUpdate = await prisma.grievanceStatusHistory.create({
+      data: {
+        grievanceId: id,
+        status: status.toUpperCase(),
+        comment: comment || null,
+        createdBy: req.user.id
+      }
+    });
+
+    // Get updated grievance
+    const grievance = await prisma.grievance.findUnique({
+      where: { id },
+      include: {
+        statuses: {
+          orderBy: { createdAt: "desc" }
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      statusUpdate,
+      grievance
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ error: "Failed to update status" });
+  }
+});
+
+// Save form data to cache (auto-save)
+router.post("/form/save", verifyToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    const userId = req.user.id;
+    const formData = req.body;
+
+    await saveFormData(userId, formData);
+
+    res.json({
+      success: true,
+      message: "Form data saved"
+    });
+  } catch (error) {
+    console.error("Error saving form data:", error);
+    res.status(500).json({ error: "Failed to save form data" });
+  }
+});
+
+// Get saved form data from cache
+router.get("/form/restore", verifyToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    const userId = req.user.id;
+
+    const formData = await getFormData(userId);
+
+    res.json({
+      success: true,
+      formData
+    });
+  } catch (error) {
+    console.error("Error restoring form data:", error);
+    res.status(500).json({ error: "Failed to restore form data" });
+  }
+});
+
+// Clear saved form data from cache
+router.delete("/form/clear", verifyToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    
+    const userId = req.user.id;
+
+    await clearFormData(userId);
+
+    res.json({
+      success: true,
+      message: "Form data cleared"
+    });
+  } catch (error) {
+    console.error("Error clearing form data:", error);
+    res.status(500).json({ error: "Failed to clear form data" });
   }
 });
 

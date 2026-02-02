@@ -1,13 +1,9 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Users, CheckCircle, Clock } from 'lucide-react';
+import { ArrowDown, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import CityScene from './CityScene';
-
-const stats = [
-  { icon: Users, value: '2M+', label: 'Citizens Served' },
-  { icon: CheckCircle, value: '95%', label: 'Resolution Rate' },
-  { icon: Clock, value: '<48h', label: 'Avg Response Time' },
-];
+import HeroBackground from './HeroBackground';
 
 function LoadingFallback() {
   return (
@@ -21,10 +17,36 @@ function LoadingFallback() {
 }
 
 export default function HeroSection() {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/auth/me`, {
+          credentials: 'include',
+        });
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const handleSubmitGrievance = () => {
+    if (isLoggedIn) {
+      navigate('/dashboard');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <section id="home" className="relative min-h-screen pt-24 pb-16 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 hero-gradient-radial opacity-30" />
+      {/* Crazy Three.js Background */}
+      <HeroBackground />
       
       <div className="section-container relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -32,29 +54,19 @@ export default function HeroSection() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             className="text-center lg:text-left"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
-            >
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-sm font-medium text-primary">
-                Empowering Citizens Through Technology
-              </span>
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6"
+              transition={{ delay: 0.2 }}
+              className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-[1.1] mb-8"
             >
               Your Voice{' '}
-              <span className="text-gradient">Matters</span>
+              <span className="bg-gradient-to-r from-[#007ea7] via-[#00a8e8] to-[#00c4ff] bg-clip-text text-transparent">
+                Matters
+              </span>
               <br />
               To Your City
             </motion.h1>
@@ -62,8 +74,8 @@ export default function HeroSection() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0"
+              transition={{ delay: 0.3 }}
+              className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-xl leading-relaxed"
             >
               Sampark bridges the gap between citizens and urban local bodies, 
               ensuring transparency, traceability, and accountability in 
@@ -73,52 +85,39 @@ export default function HeroSection() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12"
+              transition={{ delay: 0.4 }}
+              className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start"
             >
-              <a
-                href="#grievance"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full gold-gradient text-accent-foreground font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              <motion.button
+                onClick={handleSubmitGrievance}
+                className="group relative inline-flex items-center justify-center gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-[#007ea7] via-[#00a8e8] to-[#00c4ff] text-white font-bold shadow-lg transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: '0 20px 40px -15px rgba(0,168,232,0.5)' }}
+                whileTap={{ scale: 0.98 }}
               >
-                Submit a Grievance
-              </a>
-              <a
+                <span className="relative z-10">Submit a Grievance</span>
+              </motion.button>
+              <motion.a
                 href="#features"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-primary/30 text-foreground font-semibold hover:bg-primary/10 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-full border-2 border-[#007ea7]/40 dark:border-[#00a8e8]/40 text-gray-900 dark:text-white font-bold hover:bg-[#007ea7]/10 dark:hover:bg-[#00a8e8]/10 hover:border-[#00a8e8] transition-all duration-300"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 Explore Features
-              </a>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="grid grid-cols-3 gap-4"
-            >
-              {stats.map((stat, index) => (
-                <div key={index} className="text-center lg:text-left">
-                  <div className="flex items-center justify-center lg:justify-start gap-2 mb-1">
-                    <stat.icon className="w-4 h-4 text-primary" />
-                    <span className="font-display text-2xl font-bold text-foreground">
-                      {stat.value}
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
+              </motion.a>
             </motion.div>
           </motion.div>
 
-          {/* Right - 3D Scene */}
+          {/* Right - 3D Scene with decorative elements */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
+            className="relative"
           >
+            {/* Decorative circles */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-[#00a8e8]/20 to-[#007ea7]/20 rounded-full blur-2xl animate-pulse-slow" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-blue-500/20 rounded-full blur-2xl animate-pulse-slow" style={{ animationDelay: '1s' }} />
+            
             <Suspense fallback={<LoadingFallback />}>
               <CityScene />
             </Suspense>
@@ -134,7 +133,7 @@ export default function HeroSection() {
         >
           <a
             href="#problem"
-            className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            className="flex flex-col items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-[#007ea7] dark:hover:text-[#00a8e8] transition-colors"
           >
             <span className="text-xs font-medium">Scroll to explore</span>
             <ArrowDown className="w-5 h-5 animate-bounce" />
