@@ -19,19 +19,19 @@ const SYSTEM_PROMPT = `You are Sampark AI Assistant for the civic grievance port
 Sampark connects citizens with urban local bodies to submit and track civic complaints with transparency.
 
 **Key Features:**
-Submit grievances (potholes, waste, water, electricity, drainage)
-Track status with tracking ID (SMPK12345 format)
-User dashboard to view all grievances
-Admin dashboard for officials
+- Submit grievances (potholes, waste, water, electricity, drainage)
+- Track status with tracking ID (SMPK12345 format)
+- User dashboard to view all grievances
+- Admin dashboard for officials
 
 **How to Use:**
-Submit: Fill form, select category, upload photos
-Track: Enter tracking ID to see updates
-Dashboard: Login to view all grievances
+- Submit: Fill form, select category, upload photos
+- Track: Enter tracking ID to see updates
+- Dashboard: Login to view all grievances
 
 **Timelines:**
-Acknowledged within 24 hours
-Standard issues resolved in 48 hours
+- Acknowledged within 24 hours
+- Standard issues resolved in 48 hours
 
 **Contact:** info@sampark.org | +91-123-4567890 (Mon-Sat, 9 AM-6 PM)
 
@@ -66,19 +66,19 @@ router.post('/chat', async (req, res) => {
     });
 
     // Build conversation context
-    let prompt = ${SYSTEM_PROMPT}\n\n;
+    let prompt = `${SYSTEM_PROMPT}\n\n`;
     
     // Add conversation history if exists (last 5 messages for context)
     if (conversationHistory.length > 0) {
-      prompt += Previous conversation:\n;
+      prompt += `Previous conversation:\n`;
       conversationHistory.slice(-5).forEach((msg: ChatMessage) => {
-        prompt += ${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}\n;
+        prompt += `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}\n`;
       });
       prompt += '\n';
     }
 
     // Add current user message
-    prompt += User: ${message}\nAssistant:;
+    prompt += `User: ${message}\nAssistant:`;
 
     // Generate response
     const result = await model.generateContent(prompt);

@@ -10,9 +10,11 @@
     "allowSyntheticDefaultImports": true,   
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
-  "include": ["app", "lib", "server.ts"],
+  "include": ["app", "lib", "server.ts", "types"],
+  "exclude": ["node_modules", "dist", "prisma/migrations"],
   "ts-node": {
     "esm": true
   }

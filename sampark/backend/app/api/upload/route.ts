@@ -124,7 +124,7 @@ router.post("/images", async (req, res) => {
     }
 
     const files = Array.isArray(req.files.files) ? req.files.files : [req.files.files];
-    console.log(📁 Processing ${files.length} file(s));
+    console.log(`📁 Processing ${files.length} file(s)`);
     
     // Limit number of files (max 5 images per upload)
     if (files.length > 5) {
@@ -140,16 +140,16 @@ router.post("/images", async (req, res) => {
       try {
         // Validate each file
         if (!allowedTypes.includes(file.mimetype)) {
-          console.warn(⚠️ ${file.name}: Invalid type (${file.mimetype}));
-          return { success: false, error: ${file.name}: Invalid file type };
+          console.warn(`⚠️ ${file.name}: Invalid type (${file.mimetype})`);
+          return { success: false, error: `${file.name}: Invalid file type` };
         }
 
         if (file.size > 10 * 1024 * 1024) {
-          console.warn(⚠️ ${file.name}: File too large (${(file.size / 1024 / 1024).toFixed(2)} MB));
-          return { success: false, error: ${file.name}: Exceeds 10MB limit };
+          console.warn(`⚠️ ${file.name}: File too large (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+          return { success: false, error: `${file.name}: Exceeds 10MB limit` };
         }
 
-        console.log(📤 Uploading ${file.name} to Cloudinary...);
+        console.log(`📤 Uploading ${file.name} to Cloudinary...`);
         
         // Upload to Cloudinary
         const uploadResult = await new Promise<{secure_url: string; public_id: string}>((resolve, reject) => {
@@ -170,7 +170,7 @@ router.post("/images", async (req, res) => {
           bufferToStream(file.data).pipe(uploadStream);
         });
 
-        console.log(✅ ${file.name} uploaded successfully);
+        console.log(`✅ ${file.name} uploaded successfully`);
         return {
           success: true,
           url: uploadResult.secure_url,
@@ -178,8 +178,8 @@ router.post("/images", async (req, res) => {
           filename: file.name,
         };
       } catch (error) {
-        console.error(❌ Error uploading ${file.name}:, error);
-        return { success: false, error: ${file.name}: Upload failed };
+        console.error(`❌ Error uploading ${file.name}:`, error);
+        return { success: false, error: `${file.name}: Upload failed` };
       }
     });
 
