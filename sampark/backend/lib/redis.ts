@@ -17,8 +17,8 @@ export const isRedisConfigured = () => {
 
 // Cache keys
 export const CACHE_KEYS = {
-  FORM_DATA: (userId: string) => form:grievance:${userId},
-  USER_GRIEVANCES: (userId: string) => grievances:user:${userId},
+  FORM_DATA: (userId: string) => `form:grievance:${userId}`,
+  USER_GRIEVANCES: (userId: string) => `grievances:user:${userId}`,
 };
 
 // Cache TTL (Time To Live) in seconds
@@ -40,7 +40,7 @@ export async function saveFormData(userId: string, formData: Record<string, unkn
       CACHE_TTL.FORM_DATA,
       JSON.stringify(formData)
     );
-    console.log(✅ Form data cached for user: ${userId});
+    console.log(`✅ Form data cached for user: ${userId}`);
     return true;
   } catch (error) {
     console.error('Error saving form data to cache:', error);
@@ -56,7 +56,7 @@ export async function getFormData(userId: string) {
   try {
     const data = await redis.get(CACHE_KEYS.FORM_DATA(userId));
     if (data) {
-      console.log(✅ Form data retrieved from cache for user: ${userId});
+      console.log(`✅ Form data retrieved from cache for user: ${userId}`);
       return typeof data === 'string' ? JSON.parse(data) : data;
     }
     return null;
@@ -73,7 +73,7 @@ export async function clearFormData(userId: string) {
   
   try {
     await redis.del(CACHE_KEYS.FORM_DATA(userId));
-    console.log(✅ Form data cleared for user: ${userId});
+    console.log(`✅ Form data cleared for user: ${userId}`);
     return true;
   } catch (error) {
     console.error('Error clearing form data from cache:', error);
@@ -93,7 +93,7 @@ export async function cacheUserGrievances(userId: string, grievances: unknown[])
       CACHE_TTL.USER_GRIEVANCES,
       JSON.stringify(grievances)
     );
-    console.log(✅ Grievances cached for user: ${userId} (${grievances.length} items));
+    console.log(`✅ Grievances cached for user: ${userId} (${grievances.length} items)`);
     return true;
   } catch (error) {
     console.error('Error caching grievances:', error);
@@ -109,7 +109,7 @@ export async function getCachedUserGrievances(userId: string) {
   try {
     const data = await redis.get(CACHE_KEYS.USER_GRIEVANCES(userId));
     if (data) {
-      console.log(✅ Grievances retrieved from cache for user: ${userId});
+      console.log(`✅ Grievances retrieved from cache for user: ${userId}`);
       return typeof data === 'string' ? JSON.parse(data) : data;
     }
     return null;
@@ -126,7 +126,7 @@ export async function invalidateUserGrievancesCache(userId: string) {
   
   try {
     await redis.del(CACHE_KEYS.USER_GRIEVANCES(userId));
-    console.log(✅ Grievances cache invalidated for user: ${userId});
+    console.log(`✅ Grievances cache invalidated for user: ${userId}`);
     return true;
   } catch (error) {
     console.error('Error invalidating grievances cache:', error);
