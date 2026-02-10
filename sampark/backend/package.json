@@ -10,13 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch server.ts",
     "build": "cd .. && npm run build",
-    "build:development": "cd .. && npm run build:development",
-    "build:staging": "cd .. && npm run build:staging",
-    "build:production": "cd .. && npm run build:production",
     "start": "tsx server.ts",
-    "start:dev": "npm run build:development && npm start",
-    "start:staging": "npm run build:staging && npm start",
-    "start:production": "npm run build:production && npm start"
+    "start:dev": "npm run build && npm start"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +20,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.19.2",
+    "@types/nodemailer": "^7.0.9",
     "@upstash/redis": "^1.36.1",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
@@ -36,6 +32,7 @@
     "form-data": "^4.0.5",
     "ioredis": "^5.9.2",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^8.0.1",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0"
   },

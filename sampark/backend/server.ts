@@ -10,11 +10,15 @@ import grievanceRoutes from './app/api/grievance/route.js';
 import uploadRoutes from './app/api/upload/route.js';
 import adminRoutes from './app/api/admin/route.js';
 import chatbotRoutes from './app/api/chatbot/route.js';
+import { initializeMailer } from './lib/mailer.js';
 
 // Load environment variables
 dotenv.config();
 
 console.log('🚀 Initializing server...');
+
+// Initialize email service
+initializeMailer();
 
 // Global error handlers
 process.on('uncaughtException', (error) => {
@@ -69,6 +73,9 @@ app.use(fileUpload({
 // Health check endpoint for Cloud Run
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+app.get('/', (req, res) => {
+  res.send('Welcome to the Sampark API');
 });
 
 console.log('✅ Health check endpoint registered');
