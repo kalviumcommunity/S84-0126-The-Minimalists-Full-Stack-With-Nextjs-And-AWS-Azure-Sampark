@@ -10,8 +10,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch server.ts",
     "build": "cd .. && npm run build",
+    "build:development": "cd .. && npm run build:development",
+    "build:staging": "cd .. && npm run build:staging",
+    "build:production": "cd .. && npm run build:production",
     "start": "tsx server.ts",
-    "start:dev": "npm run build && npm start"
+    "start:dev": "npm run build:development && npm start",
+    "start:staging": "npm run build:staging && npm start",
+    "start:production": "npm run build:production && npm start"
   },
   "keywords": [],
   "author": "",
