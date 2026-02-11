@@ -68,7 +68,11 @@ app.use(fileUpload({
 
 // Health check endpoint for Cloud Run
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
 });
 
 console.log('✅ Health check endpoint registered');
