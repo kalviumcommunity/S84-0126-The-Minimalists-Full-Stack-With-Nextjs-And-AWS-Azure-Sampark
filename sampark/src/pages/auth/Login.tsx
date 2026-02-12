@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Sparkles, ArrowLeft } from 'lucide-react';
 import { buildApiUrl } from '@/lib/api';
+import logger from '@/lib/logger';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Login: React.FC = () => {
     try {
       // Call backend API for authentication
       const apiUrl = buildApiUrl('/api/auth/login');
-      console.log('Attempting login to:', apiUrl);
+      logger.info('Attempting login to:', apiUrl);
       
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -37,21 +38,21 @@ const Login: React.FC = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Login failed');
 
-      console.log('Login response:', data); // Debug log
+      logger.debug('Login response:', data);
 
       if (data.user) {
         // Store user data in localStorage for display purposes
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        console.log('User role:', data.user.role); // Debug log
+        logger.debug('User role:', data.user.role);
         
         // Check if user is admin based on backend response
         if (data.user.role === 'ADMIN') {
-          console.log('Redirecting to admin dashboard'); // Debug log
+          logger.info('Redirecting to admin dashboard');
           localStorage.setItem('isAdmin', 'true');
           navigate('/admin/dashboard');
         } else {
-          console.log('Redirecting to user dashboard'); // Debug log
+          logger.info('Redirecting to user dashboard');
           navigate('/dashboard');
         }
       }
