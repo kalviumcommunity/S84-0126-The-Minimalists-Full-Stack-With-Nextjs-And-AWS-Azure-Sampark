@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Mail, ArrowLeft, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { buildApiUrl } from '@/lib/api';
+import logger from '@/lib/logger';
 
 const VerifyOTP: React.FC = () => {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ const VerifyOTP: React.FC = () => {
     setError("");
 
     try {
-      console.log('Verifying OTP:', { 
+      logger.debug('Verifying OTP:', { 
         email, 
         emailType: typeof email,
         otp: otpCode, 
@@ -88,7 +89,7 @@ const VerifyOTP: React.FC = () => {
       });
 
       const data = await response.json();
-      console.log('Verify OTP response:', data); // Debug log
+      logger.debug('Verify OTP response:', data);
 
       if (!response.ok) {
         throw new Error(data.message || "Verification failed");
@@ -120,7 +121,7 @@ const VerifyOTP: React.FC = () => {
     setSuccess("");
 
     try {
-      console.log('Resending OTP to:', email); // Debug log
+      logger.debug('Resending OTP to:', email);
       
       const response = await fetch(buildApiUrl('/api/auth/resend-otp'), {
         method: "POST",
