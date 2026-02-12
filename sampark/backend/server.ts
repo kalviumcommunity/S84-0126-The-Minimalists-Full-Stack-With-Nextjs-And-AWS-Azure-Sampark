@@ -76,7 +76,11 @@ app.use(fileUpload({
 
 // Health check endpoint for Cloud Run
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
 });
 app.get('/', (req, res) => {
   res.send('Welcome to the Sampark API');
