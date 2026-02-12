@@ -37,15 +37,19 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
+const FRONTEND_URL = process.env.FRONTEND_URL || "https://sampark-in.vercel.app";
 
 console.log('✅ Express app created');
 
-// Allow multiple origins for development
+// Allow multiple origins for development and production
 const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:8081',
   'http://localhost:5173',
+  'https://samparkin.vercel.app',
+  'https://samparkin.vercel.app/',
+  'https://sampark-in.vercel.app',
+  'https://sampark-in.vercel.app/',
   FRONTEND_URL
 ];
 
