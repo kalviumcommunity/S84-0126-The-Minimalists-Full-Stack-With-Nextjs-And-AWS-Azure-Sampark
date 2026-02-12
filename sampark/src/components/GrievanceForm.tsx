@@ -388,7 +388,7 @@ export default function GrievanceForm({ onGrievanceSubmitted }: GrievanceFormPro
       </div>
 
       <div className="space-y-2">
-        <Label>Upload Images (Optional)</Label>
+        <Label htmlFor="image-upload">Upload Images (Optional)</Label>
         <div className="relative">
           <input
             type="file"
@@ -398,6 +398,7 @@ export default function GrievanceForm({ onGrievanceSubmitted }: GrievanceFormPro
             disabled={isUploading}
             className="hidden"
             id="image-upload"
+            aria-describedby="image-upload-description"
           />
           <label
             htmlFor="image-upload"
@@ -406,11 +407,11 @@ export default function GrievanceForm({ onGrievanceSubmitted }: GrievanceFormPro
             } text-center`}
           >
             {isUploading ? (
-              <Loader2 className="w-8 h-8 text-muted-foreground mx-auto mb-2 animate-spin" />
+              <Loader2 className="w-8 h-8 text-muted-foreground mx-auto mb-2 animate-spin" aria-hidden="true" />
             ) : (
-              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" aria-hidden="true" />
             )}
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground" id="image-upload-description">
               {isUploading ? (
                 'Uploading...'
               ) : (
