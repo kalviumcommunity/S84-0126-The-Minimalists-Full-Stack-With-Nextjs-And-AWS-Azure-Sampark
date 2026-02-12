@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Test Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        .info { color: #60a5fa; }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 OTP Debug Tool</h1>
+        
+        <div class="section">
+            <h2>1. Send Signup Request</h2>
+            <label>Name:</label>
+            <input type="text" id="name" placeholder="Your Name" value="Test User">
+            
+            <label>Email:</label>
+            <input type="email" id="email" placeholder="your@email.com">
+            
+            <label>Password:</label>
+            <input type="password" id="password" placeholder="password123" value="password123">
+            
+            <button onclick="testSignup()">Send Signup (Get OTP)</button>
+            <div id="signupResult" class="result" style="display:none"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Verify OTP</h2>
+            <label>Email (must match above):</label>
+            <input type="email" id="verifyEmail" placeholder="your@email.com">
+            
+            <label>OTP Code (check your email):</label>
+            <input type="text" id="otp" placeholder="123456" maxlength="6">
+            
+            <button onclick="testVerifyOTP()">Verify OTP</button>
+            <div id="verifyResult" class="result" style="display:none"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. Debug Info</h2>
+            <button onclick="showDebugInfo()">Show Current State</button>
+            <div id="debugInfo" class="result" style="display:none"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function testSignup() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('signupResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<span class="info">Sending request...</span>';
+            
+            // Auto-fill verify email
+            document.getElementById('verifyEmail').value = email;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+<span class="success">✅ SUCCESS</span>
+
+Status: ${response.status}
+Email sent to: ${data.email}
+Message: ${data.message}
+
+<span class="info">📧 Check your email for the OTP code!</span>
+<span class="info">The backend console will show: "Generated OTP for ${email}: XXXXXX"</span>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+<span class="error">❌ ERROR</span>
+
+Status: ${response.status}
+Message: ${data.message}
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testVerifyOTP() {
+            const email = document.getElementById('verifyEmail').value;
+            const otp = document.getElementById('otp').value;
+            const resultDiv = document.getElementById('verifyResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<span class="info">Verifying...</span>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, otp })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+<span class="success">✅ SUCCESS - Account Created!</span>
+
+Status: ${response.status}
+Message: ${data.message}
+User: ${JSON.stringify(data.user, null, 2)}
+
+<span class="success">You can now login with these credentials!</span>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+<span class="error">❌ VERIFICATION FAILED</span>
+
+Status: ${response.status}
+Message: ${data.message}
+
+Debug Info:
+- Email sent: "${email}"
+- OTP sent: "${otp}"
+- OTP length: ${otp.length}
+- Email length: ${email.length}
+
+<span class="info">💡 Tips:</span>
+- Make sure email matches exactly
+- Check for spaces in OTP
+- OTP expires in 10 minutes
+- Check backend console for detailed logs
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network Error: ${error.message}</span>`;
+            }
+        }
+
+        function showDebugInfo() {
+            const debugDiv = document.getElementById('debugInfo');
+            debugDiv.style.display = 'block';
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const verifyEmail = document.getElementById('verifyEmail').value;
+            const otp = document.getElementById('otp').value;
+
+            debugDiv.innerHTML = `
+<span class="info">Current Form Values:</span>
+
+Signup Email: "${email}"
+Verify Email: "${verifyEmail}"
+Emails Match: ${email === verifyEmail ? '✅ Yes' : '❌ No'}
+
+OTP: "${otp}"
+OTP Length: ${otp.length} ${otp.length === 6 ? '✅' : '❌ Should be 6'}
+OTP Type: ${typeof otp}
+
+Name: "${name}"
+
+<span class="info">API Endpoint: ${API_URL}</span>
+<span class="info">Backend should be running on port 3000</span>
+
+<span class="info">💡 Check backend terminal for logs like:</span>
+- "Generated OTP for [email]: XXXXXX"
+- "OTP Verification Debug: {...}"
+- "OTP verified successfully"
+            `;
+        }
+    </script>
+</body>
+</html>

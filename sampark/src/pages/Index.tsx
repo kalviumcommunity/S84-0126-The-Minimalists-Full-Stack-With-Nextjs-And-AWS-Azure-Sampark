@@ -1,29 +1,123 @@
-import Navbar from '@/components/Navbar';
-import HeroSection from '@/components/HeroSection';
-import ProblemSection from '@/components/ProblemSection';
-import SolutionSection from '@/components/SolutionSection';
-import FeaturesSection from '@/components/FeaturesSection';
-import ContactSection from '@/components/ContactSection';
-import Footer from '@/components/Footer';
-import Chatbot from '@/components/Chatbot';
-import AnimatedBackground from '@/components/AnimatedBackground';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { AnimatePresence, motion } from "framer-motion";
 
-const Index = () => {
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
+import VerifyOTP from "./pages/auth/VerifyOTP";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AllGrievances from "./pages/admin/AllGrievances";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminRoute from "./components/AdminRoute";
+
+const queryClient = new QueryClient();
+
+function AnimatedRoutes() {
+  const location = useLocation();
+
   return (
-    <div className="min-h-screen">
-      <AnimatedBackground />
-      <div className="relative z-10">
-        <Navbar />
-        <HeroSection />
-        <ProblemSection />
-        <SolutionSection />
-        <FeaturesSection />
-        <ContactSection />
-        <Footer />
-        <Chatbot />
-      </div>
-    </div>
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Index />
+          </motion.div>
+        } />
+        <Route path="/dashboard" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Dashboard />
+          </motion.div>
+        } />
+        <Route path="/login" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Login />
+          </motion.div>
+        } />
+        <Route path="/signup" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Signup />
+          </motion.div>
+        } />
+        <Route path="/verify-otp" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <VerifyOTP />
+          </motion.div>
+        } />
+        
+        {/* Admin Routes with persistent layout - Protected */}
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="grievances" element={<AllGrievances />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+        </Route>
+        
+        {/* Catch-all */}
+        <Route path="*" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <NotFound />
+          </motion.div>
+        } />
+      </Routes>
+    </AnimatePresence>
   );
-};
+}
 
-export default Index;
+const App: React.FC = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
+);
+
+export default App;

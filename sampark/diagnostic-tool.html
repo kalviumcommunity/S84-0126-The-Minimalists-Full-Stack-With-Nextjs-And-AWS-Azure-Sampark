@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sampark Deployment Diagnostic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #667eea; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .test-title { font-weight: 600; margin-bottom: 15px; color: #333; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button:hover { transform: translateY(-2px); transition: 0.2s; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success { background: #d1fae5; color: #065f46; border: 1px solid #10b981; }
+        .error { background: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
+        .warning { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+        .info { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6; }
+        code { background: #f9fafb; padding: 2px 6px; border-radius: 4px; }
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-ok { color: #10b981; font-weight: 600; }
+        .status-fail { color: #ef4444; font-weight: 600; }
+        .status-pending { color: #f59e0b; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Sampark Deployment Diagnostic</h1>
+        <p class="subtitle">Let's find out why the error is still happening</p>
+
+        <!-- Test 1: Backend URL Input -->
+        <div class="test-section">
+            <div class="test-title">1️⃣ Enter Your Backend URL</div>
+            <input type="text" id="backendUrl" placeholder="https://sampark-backend.onrender.com" />
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">
+                Find this in your Render dashboard. Should end with .onrender.com
+            </p>
+        </div>
+
+        <!-- Test 2: Backend Health -->
+        <div class="test-section">
+            <div class="test-title">2️⃣ Test Backend Health</div>
+            <button onclick="testBackendHealth()" id="healthBtn">Test Backend</button>
+            <div id="healthResult"></div>
+        </div>
+
+        <!-- Test 3: Backend API -->
+        <div class="test-section">
+            <div class="test-title">3️⃣ Test Backend API</div>
+            <button onclick="testBackendAPI()" id="apiBtn">Test API Endpoint</button>
+            <div id="apiResult"></div>
+        </div>
+
+        <!-- Test 4: Vercel Config Check -->
+        <div class="test-section">
+            <div class="test-title">4️⃣ Vercel Configuration Check</div>
+            <div class="status-item">
+                <span>Did you set VITE_API_URL in Vercel dashboard?</span>
+                <span id="vercelCheck" class="status-pending">❓ Unknown</span>
+            </div>
+            <div class="status-item">
+                <span>Did you redeploy frontend after setting it?</span>
+                <span id="redeployCheck" class="status-pending">❓ Unknown</span>
+            </div>
+            <div class="result info" style="margin-top: 15px;">
+                <strong>⚠️ Critical:</strong><br>
+                1. Go to: <a href="https://vercel.com/dashboard" target="_blank">Vercel Dashboard</a><br>
+                2. Your project → Settings → Environment Variables<br>
+                3. Add VITE_API_URL with your backend URL<br>
+                4. Deployments → Latest → Redeploy<br>
+                <br>
+                <strong>Without these steps, the error will persist!</strong>
+            </div>
+        </div>
+
+        <!-- Test 5: What's Wrong -->
+        <div class="test-section">
+            <div class="test-title">5️⃣ Diagnosis</div>
+            <button onclick="runFullDiagnostic()" id="diagBtn">Run Full Diagnostic</button>
+            <div id="diagResult"></div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="test-section" style="border-left-color: #10b981;">
+            <div class="test-title">📋 Next Steps Based on Results</div>
+            <div id="nextSteps" class="result info">
+                Run the diagnostic above to get personalized next steps.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testBackendHealth() {
+            const btn = document.getElementById('healthBtn');
+            const result = document.getElementById('healthResult');
+            const url = document.getElementById('backendUrl').value.trim();
+
+            if (!url) {
+                result.innerHTML = '<div class="result error">❌ Please enter your backend URL first!</div>';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Testing<span class="spinner"></span>';
+            result.innerHTML = '';
+
+            try {
+                const healthUrl = url.endsWith('/') ? url + 'health' : url + '/health';
+                const response = await fetch(healthUrl);
+                const data = await response.json();
+
+                if (response.ok && data.status === 'ok') {
+                    result.innerHTML = `
+                        <div class="result success">
+                            ✅ <strong>Backend is LIVE!</strong><br><br>
+                            Response: ${JSON.stringify(data, null, 2)}<br><br>
+                            <strong>Your backend is working correctly!</strong>
+                        </div>
+                    `;
+                } else {
+                    throw new Error('Unexpected response');
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="result error">
+                        ❌ <strong>Backend is NOT responding!</strong><br><br>
+                        Error: ${error.message}<br><br>
+                        <strong>Problems:</strong><br>
+                        • Backend may not be deployed correctly<br>
+                        • Check Render logs for errors<br>
+                        • Verify all environment variables are set<br>
+                        • Backend might be spinning down (wait 60s and retry)<br><br>
+                        <strong>Check Render dashboard logs!</strong>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Test Backend';
+            }
+        }
+
+        async function testBackendAPI() {
+            const btn = document.getElementById('apiBtn');
+            const result = document.getElementById('apiResult');
+            const url = document.getElementById('backendUrl').value.trim();
+
+            if (!url) {
+                result.innerHTML = '<div class="result error">❌ Please enter your backend URL first!</div>';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Testing<span class="spinner"></span>';
+            result.innerHTML = '';
+
+            try {
+                const apiUrl = url.endsWith('/') ? url + 'api/auth/login' : url + '/api/auth/login';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'test@test.com', password: 'test123' })
+                });
+
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <div class="result success">
+                            ✅ <strong>API Endpoint is responding!</strong><br><br>
+                            Status: ${response.status}<br>
+                            Response: ${JSON.stringify(data, null, 2)}<br><br>
+                            <strong>Your API is working! Now check Vercel configuration.</strong>
+                        </div>
+                    `;
+                } else {
+                    const text = await response.text();
+                    throw new Error('Got HTML instead of JSON: ' + text.substring(0, 100));
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="result error">
+                        ❌ <strong>API Endpoint Failed!</strong><br><br>
+                        Error: ${error.message}<br><br>
+                        <strong>This means:</strong><br>
+                        • Backend routes not configured correctly<br>
+                        • Or CORS issues<br>
+                        • Or backend crashed<br><br>
+                        Check Render logs!
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Test API Endpoint';
+            }
+        }
+
+        async function runFullDiagnostic() {
+            const btn = document.getElementById('diagBtn');
+            const result = document.getElementById('diagResult');
+            const nextSteps = document.getElementById('nextSteps');
+            const url = document.getElementById('backendUrl').value.trim();
+
+            if (!url) {
+                result.innerHTML = '<div class="result error">❌ Please enter your backend URL first!</div>';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Running Diagnostic<span class="spinner"></span>';
+            result.innerHTML = '<div class="result info">Running tests...</div>';
+
+            const issues = [];
+            const successes = [];
+
+            // Test 1: Backend Health
+            try {
+                const healthUrl = url.endsWith('/') ? url + 'health' : url + '/health';
+                const response = await fetch(healthUrl);
+                const data = await response.json();
+                if (response.ok && data.status === 'ok') {
+                    successes.push('✅ Backend is live and responding');
+                } else {
+                    issues.push('❌ Backend health check failed');
+                }
+            } catch (error) {
+                issues.push('❌ Cannot reach backend: ' + error.message);
+            }
+
+            // Test 2: API Endpoint
+            try {
+                const apiUrl = url.endsWith('/') ? url + 'api/auth/login' : url + '/api/auth/login';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'test@test.com', password: 'test' })
+                });
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    successes.push('✅ API endpoint is responding with JSON');
+                } else {
+                    issues.push('❌ API endpoint returning HTML instead of JSON');
+                }
+            } catch (error) {
+                issues.push('❌ API endpoint failed: ' + error.message);
+            }
+
+            // Generate report
+            let reportHTML = '<div class="result ' + (issues.length === 0 ? 'success' : 'warning') + '">';
+            reportHTML += '<strong>📊 Diagnostic Report:</strong><br><br>';
+            
+            if (successes.length > 0) {
+                reportHTML += '<strong>Working:</strong><br>';
+                successes.forEach(s => reportHTML += s + '<br>');
+                reportHTML += '<br>';
+            }
+            
+            if (issues.length > 0) {
+                reportHTML += '<strong>Issues Found:</strong><br>';
+                issues.forEach(i => reportHTML += i + '<br>');
+            } else {
+                reportHTML += '🎉 <strong>Backend is fully functional!</strong>';
+            }
+            
+            reportHTML += '</div>';
+            result.innerHTML = reportHTML;
+
+            // Generate next steps
+            let steps = '<div class="result ' + (issues.length === 0 ? 'success' : 'error') + '">';
+            if (issues.length === 0) {
+                steps += '<strong>✅ Backend is working!</strong><br><br>';
+                steps += '<strong>Now you MUST:</strong><br>';
+                steps += '1. Go to <a href="https://vercel.com/dashboard" target="_blank">Vercel Dashboard</a><br>';
+                steps += '2. Click your samparkin project<br>';
+                steps += '3. Settings → Environment Variables<br>';
+                steps += '4. Add: <code>VITE_API_URL</code> = <code>' + url + '</code><br>';
+                steps += '5. Save<br>';
+                steps += '6. Go to Deployments tab<br>';
+                steps += '7. Latest deployment → "..." → Redeploy<br>';
+                steps += '8. Wait 2 minutes<br>';
+                steps += '9. Clear browser cache (Ctrl+Shift+R)<br>';
+                steps += '10. Try login again<br><br>';
+                steps += '<strong>⚠️ If you skip these steps, error will continue!</strong>';
+            } else {
+                steps += '<strong>❌ Backend has issues!</strong><br><br>';
+                steps += '<strong>Fix these first:</strong><br>';
+                steps += '1. Go to Render dashboard<br>';
+                steps += '2. Check logs for errors<br>';
+                steps += '3. Verify all environment variables are set<br>';
+                steps += '4. Make sure deployment status is "Live"<br>';
+                steps += '5. If free tier, wait 60 seconds for spin-up<br><br>';
+                steps += '<strong>Then run this test again.</strong>';
+            }
+            steps += '</div>';
+            nextSteps.innerHTML = steps;
+
+            btn.disabled = false;
+            btn.innerHTML = 'Run Full Diagnostic';
+        }
+    </script>
+</body>
+</html>

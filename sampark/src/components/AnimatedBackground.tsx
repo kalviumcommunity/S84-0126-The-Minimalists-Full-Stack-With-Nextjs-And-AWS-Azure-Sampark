@@ -1,63 +1,123 @@
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { AnimatePresence, motion } from "framer-motion";
 
-interface AdminRouteProps {
-  children: React.ReactNode;
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
+import VerifyOTP from "./pages/auth/VerifyOTP";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AllGrievances from "./pages/admin/AllGrievances";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminRoute from "./components/AdminRoute";
+
+const queryClient = new QueryClient();
+
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Index />
+          </motion.div>
+        } />
+        <Route path="/dashboard" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Dashboard />
+          </motion.div>
+        } />
+        <Route path="/login" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Login />
+          </motion.div>
+        } />
+        <Route path="/signup" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Signup />
+          </motion.div>
+        } />
+        <Route path="/verify-otp" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <VerifyOTP />
+          </motion.div>
+        } />
+        
+        {/* Admin Routes with persistent layout - Protected */}
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="grievances" element={<AllGrievances />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+        </Route>
+        
+        {/* Catch-all */}
+        <Route path="*" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <NotFound />
+          </motion.div>
+        } />
+      </Routes>
+    </AnimatePresence>
+  );
 }
 
-const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
+const App: React.FC = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
+);
 
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const API_URL = import.meta.env.VITE_API_URL || '';
-      try {
-        const res = await fetch(`${API_URL}/api/auth/me`, {
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          setIsAdmin(false);
-          setLoading(false);
-          return;
-        }
-
-        const data = await res.json();
-        console.log('AdminRoute - User data:', data); // Debug log
-        if (data.user && data.user.role === 'ADMIN') {
-          console.log('AdminRoute - Access granted'); // Debug log
-          setIsAdmin(true);
-        } else {
-          console.log('AdminRoute - Access denied, role:', data.user?.role); // Debug log
-          setIsAdmin(false);
-        }
-      } catch {
-        setIsAdmin(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAdmin();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#00171f]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-[#007ea7] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600 dark:text-gray-300">Verifying access...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-export default AdminRoute;
+export default App;

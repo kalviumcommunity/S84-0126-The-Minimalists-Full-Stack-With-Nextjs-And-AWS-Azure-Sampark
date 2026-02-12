@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import VerifyOTP from "./pages/auth/VerifyOTP";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AllGrievances from "./pages/admin/AllGrievances";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -64,6 +65,16 @@ function AnimatedRoutes() {
             transition={{ duration: 0.15 }}
           >
             <Signup />
+          </motion.div>
+        } />
+        <Route path="/verify-otp" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <VerifyOTP />
           </motion.div>
         } />
         
