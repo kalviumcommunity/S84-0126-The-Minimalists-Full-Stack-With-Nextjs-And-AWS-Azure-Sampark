@@ -10,7 +10,7 @@ let transporter: Transporter | null = null;
 const getEmailConfig = () => {
   return {
     user: process.env.EMAIL_USER || '',
-    pass: process.env.EMAIL_PASS || '',
+    pass: (process.env.EMAIL_PASS || '').replace(/\s/g, ''), // Remove all spaces
     from: process.env.EMAIL_FROM || 'Sampark Team',
     enabled: process.env.EMAIL_ENABLED !== 'false',
   };
@@ -73,15 +73,23 @@ export const sendEmail = async (
 ): Promise<boolean> => {
   const config = getEmailConfig();
   
+  console.log('\n🚀 ==================== SENDING EMAIL ====================');
+  console.log('To:', to);
+  console.log('Subject:', subject);
+  console.log('Email Enabled:', config.enabled);
+  console.log('Transporter Initialized:', transporter ? 'YES' : 'NO');
+  
   // Check if emails are enabled
   if (!config.enabled) {
-    console.log('📧 Email disabled in config, skipping email to:', to);
+    console.log('❌ Email disabled in config, skipping email to:', to);
+    console.log('=========================================================\n');
     return false;
   }
 
   // Check if transporter is initialized
   if (!transporter) {
-    console.warn('⚠️  Email service not initialized. Skipping email to:', to);
+    console.warn('❌ Email service not initialized. Skipping email to:', to);
+    console.log('=========================================================\n');
     return false;
   }
 
@@ -93,13 +101,17 @@ export const sendEmail = async (
       text,
     };
 
+    console.log('📤 Sending email...');
     const info = await transporter.sendMail(mailOptions);
     console.log('✅ Email sent successfully to:', to);
     console.log('   Message ID:', info.messageId);
+    console.log('=========================================================\n');
     return true;
   } catch (error) {
     console.error('❌ Failed to send email to:', to);
-    console.error('   Error:', error);
+    console.error('   Error Details:', error);
+    console.error('   Error Message:', (error as Error).message);
+    console.log('=========================================================\n');
     return false;
   }
 };
