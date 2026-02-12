@@ -1,0 +1,238 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║         🔴 YOU'RE SEEING THIS ERROR ON YOUR LIVE SITE:                    ║
+║    "Backend is not responding correctly. Please ensure the backend        ║
+║     is deployed and VITE_API_URL is set correctly."                       ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ GOOD NEWS: Your Backend IS Working!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Backend URL: https://sampark-backend-hgj4.onrender.com
+Status: ✅ LIVE and RESPONDING
+Test: curl https://sampark-backend-hgj4.onrender.com/health
+Response: {"status":"ok","timestamp":"2026-02-11T06:05:20.927Z"}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ THE PROBLEM: Frontend Doesn't Know Where Backend Is
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your frontend code at https://sampark-in.vercel.app/ is looking for:
+   import.meta.env.VITE_API_URL
+
+But this variable is NOT SET in Vercel, so it's undefined!
+
+Result: Frontend tries to call "undefined/api/auth/login" → Error!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 THE FIX: Tell Vercel Where Your Backend Is (2 Minutes)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Follow these EXACT steps:
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: Open Vercel Dashboard                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. Open your browser
+2. Go to: https://vercel.com/dashboard
+3. You should see a list of your projects
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: Open Your Project Settings                                      │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. Find "sampark-in" in your projects list
+2. Click on it
+3. You'll see tabs at the top: Overview, Deployments, Analytics, Settings
+4. Click: "Settings" tab
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: Navigate to Environment Variables                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. On the left sidebar, you'll see a menu
+2. Look for: "Environment Variables"
+3. Click on it
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 4: Add New Environment Variable                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. You'll see a list of environment variables (might be empty)
+2. Look for button: "Add New" or "Add Environment Variable"
+3. Click it
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 5: Fill in the Variable Details                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+A form will appear. Fill it EXACTLY like this:
+
+   ┌──────────────────────────────────────────────────────────────┐
+   │ Name (or Key):                                                │
+   │ VITE_API_URL                                                  │
+   │                                                               │
+   │ ⚠️ IMPORTANT: Must be exactly "VITE_API_URL" (no spaces)     │
+   └──────────────────────────────────────────────────────────────┘
+
+   ┌──────────────────────────────────────────────────────────────┐
+   │ Value:                                                        │
+   │ https://sampark-backend-hgj4.onrender.com                     │
+   │                                                               │
+   │ ⚠️ IMPORTANT: Copy-paste this exactly (no trailing slash)    │
+   └──────────────────────────────────────────────────────────────┘
+
+   ┌──────────────────────────────────────────────────────────────┐
+   │ Environment (Select which environments to apply to):          │
+   │ ☑ Production     ← CHECK THIS (required!)                    │
+   │ ☐ Preview        ← Optional                                   │
+   │ ☐ Development    ← Optional                                   │
+   └──────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 6: Save the Variable                                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. Review your entries:
+   - Name: VITE_API_URL
+   - Value: https://sampark-backend-hgj4.onrender.com
+   - Production: ☑ Checked
+
+2. Click: "Save" button
+
+3. You should see a confirmation message
+
+4. The variable should now appear in your list
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 7: Redeploy Your Frontend (CRITICAL!)                              │
+└─────────────────────────────────────────────────────────────────────────┘
+
+⚠️ IMPORTANT: Adding the variable doesn't automatically apply it!
+You MUST redeploy for it to take effect!
+
+1. Click on "Deployments" tab (at the top)
+2. You'll see a list of your deployments
+3. Find the LATEST deployment (at the top)
+4. On the right side, click the "..." (three dots menu)
+5. Click "Redeploy"
+6. A dialog will appear
+7. (Optional) Check "Use existing Build Cache" to make it faster
+8. Click "Redeploy" button
+9. Wait for the deployment (you'll see a progress indicator)
+10. Wait until status shows: "Ready" with a green checkmark ✅
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 8: Test Your Site!                                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. Wait for deployment to complete (1-2 minutes)
+2. Open a new incognito/private browser window (to avoid cache)
+3. Go to: https://sampark-in.vercel.app/login
+4. Try to signup or login
+5. It should work now! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 QUICK COPY-PASTE REFERENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Variable Name:
+VITE_API_URL
+
+Variable Value:
+https://sampark-backend-hgj4.onrender.com
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 HOW TO VERIFY IT WORKED
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After redeploying, you can check if the variable is working:
+
+1. Open: https://sampark-in.vercel.app/
+2. Press F12 (or Cmd+Option+I on Mac) to open DevTools
+3. Go to "Console" tab
+4. Type: import.meta.env.VITE_API_URL
+5. Press Enter
+6. Should show: "https://sampark-backend-hgj4.onrender.com"
+
+If it shows "undefined", the variable wasn't applied - redeploy again!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆘 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━
+
+Problem: Still getting "Backend is not responding" error
+Solutions:
+  1. Make sure you clicked "Redeploy" (not just Save)
+  2. Wait 2 full minutes for deployment to complete
+  3. Clear browser cache: Ctrl+Shift+R or Cmd+Shift+R
+  4. Try in incognito/private window
+  5. Check DevTools console for actual error message
+  6. First request might be slow (Render free tier wakes up in 30-60 sec)
+
+Problem: Can't find "Environment Variables" in Vercel
+Solutions:
+  1. Make sure you're in "Settings" tab
+  2. Look on the LEFT sidebar
+  3. Scroll down if needed
+  4. It might be under a section like "General" or "Project Settings"
+
+Problem: "Save" button is grayed out
+Solutions:
+  1. Make sure both Name and Value are filled
+  2. Make sure at least one environment is checked (Production)
+  3. Check for any error messages in red
+
+Problem: Backend URL returns 404 or error
+Solutions:
+  1. Test: curl https://sampark-backend-hgj4.onrender.com/health
+  2. If it fails, your backend might be sleeping (wait 1 minute)
+  3. Check Render dashboard to see if backend is "Live"
+  4. Make sure URL is exactly: https://sampark-backend-hgj4.onrender.com
+     (no trailing slash, no extra characters)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ FINAL CHECKLIST
+━━━━━━━━━━━━━━━━━
+
+Before testing, make sure you completed ALL these steps:
+
+[ ] Opened Vercel dashboard
+[ ] Found sampark-in project
+[ ] Went to Settings → Environment Variables
+[ ] Added variable: VITE_API_URL = https://sampark-backend-hgj4.onrender.com
+[ ] Checked "Production" environment
+[ ] Clicked "Save"
+[ ] Went to Deployments tab
+[ ] Clicked "..." on latest deployment
+[ ] Clicked "Redeploy"
+[ ] Waited for "Ready" status (2 minutes)
+[ ] Tested on live site: https://sampark-in.vercel.app/login
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 WHY THIS FIXES THE ERROR
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before: Frontend code tries to call: undefined/api/auth/login → Error!
+After: Frontend code calls: https://sampark-backend-hgj4.onrender.com/api/auth/login → Works!
+
+Your backend has been working this whole time. Your frontend just didn't know
+where to find it!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏱️ TIME ESTIMATE: 2-3 minutes to add variable + 1-2 minutes for deployment
+   Total: ~5 minutes
+
+🎯 You're so close! Just add that one variable and redeploy!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

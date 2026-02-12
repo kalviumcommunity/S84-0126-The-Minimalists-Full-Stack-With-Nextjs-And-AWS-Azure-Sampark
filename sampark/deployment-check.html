@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sampark Deployment Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #007ea7 0%, #00a8e8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #007ea7;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .status-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+        .status-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .status-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .status-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .status-ok {
+            color: #10b981;
+        }
+        .status-error {
+            color: #ef4444;
+        }
+        .status-warning {
+            color: #f59e0b;
+        }
+        .status-pending {
+            color: #6b7280;
+        }
+        button {
+            background: linear-gradient(135deg, #007ea7 0%, #00a8e8 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .result-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .result-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .url-display {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #374151;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Sampark Deployment Check</h1>
+        <p class="subtitle">Verify your frontend and backend configuration</p>
+
+        <div class="status-section">
+            <div class="status-title">Frontend Status</div>
+            <div class="status-item">
+                <span class="status-label">Environment</span>
+                <span class="status-value status-ok" id="env-status">Production</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">API URL Configured</span>
+                <span class="status-value" id="api-url-status">Checking...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Current API URL</span>
+                <div class="url-display" id="api-url-display">Loading...</div>
+            </div>
+        </div>
+
+        <div class="status-section">
+            <div class="status-title">Backend Status</div>
+            <div class="status-item">
+                <span class="status-label">Backend Reachable</span>
+                <span class="status-value status-pending" id="backend-status">Not tested</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Health Endpoint</span>
+                <span class="status-value status-pending" id="health-status">Not tested</span>
+            </div>
+        </div>
+
+        <button onclick="testConnection()" id="test-btn">
+            🚀 Test Backend Connection
+        </button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Get API URL from environment
+        const API_URL = import.meta.env.VITE_API_URL || '';
+        
+        // Update frontend status on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const apiUrlDisplay = document.getElementById('api-url-display');
+            const apiUrlStatus = document.getElementById('api-url-status');
+            
+            if (API_URL) {
+                apiUrlDisplay.textContent = API_URL;
+                apiUrlStatus.textContent = 'Configured';
+                apiUrlStatus.className = 'status-value status-ok';
+            } else {
+                apiUrlDisplay.textContent = 'Empty (using relative paths)';
+                apiUrlStatus.textContent = 'Not Set';
+                apiUrlStatus.className = 'status-value status-warning';
+            }
+        });
+
+        async function testConnection() {
+            const btn = document.getElementById('test-btn');
+            const result = document.getElementById('result');
+            const backendStatus = document.getElementById('backend-status');
+            const healthStatus = document.getElementById('health-status');
+            
+            // Disable button and show loading
+            btn.disabled = true;
+            btn.innerHTML = 'Testing Connection<span class="spinner"></span>';
+            result.innerHTML = '';
+            
+            try {
+                // Test health endpoint
+                const baseUrl = API_URL || window.location.origin;
+                const healthUrl = `${baseUrl}/health`;
+                
+                backendStatus.textContent = 'Testing...';
+                backendStatus.className = 'status-value status-warning';
+                healthStatus.textContent = 'Testing...';
+                healthStatus.className = 'status-value status-warning';
+                
+                const response = await fetch(healthUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    backendStatus.textContent = '✅ Online';
+                    backendStatus.className = 'status-value status-ok';
+                    healthStatus.textContent = '✅ Healthy';
+                    healthStatus.className = 'status-value status-ok';
+                    
+                    result.innerHTML = `
+                        <div class="result result-success">
+                            <strong>✅ Success!</strong><br>
+                            Backend is running and healthy.<br>
+                            <small>Response: ${JSON.stringify(data)}</small><br>
+                            <br>
+                            <strong>Your deployment is working correctly!</strong><br>
+                            You can now use login and signup features.
+                        </div>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                backendStatus.textContent = '❌ Offline';
+                backendStatus.className = 'status-value status-error';
+                healthStatus.textContent = '❌ Failed';
+                healthStatus.className = 'status-value status-error';
+                
+                result.innerHTML = `
+                    <div class="result result-error">
+                        <strong>❌ Connection Failed</strong><br>
+                        Error: ${error.message}<br>
+                        <br>
+                        <strong>Possible causes:</strong><br>
+                        • Backend is not deployed<br>
+                        • VITE_API_URL is not set in Vercel<br>
+                        • Backend URL is incorrect<br>
+                        • Backend is not accessible<br>
+                        <br>
+                        <strong>Next steps:</strong><br>
+                        1. Check QUICK-FIX.md for deployment instructions<br>
+                        2. Verify backend is running: <code>${API_URL || window.location.origin}/health</code><br>
+                        3. Set VITE_API_URL in Vercel dashboard<br>
+                        4. Redeploy your frontend
+                    </div>
+                `;
+            } finally {
+                // Re-enable button
+                btn.disabled = false;
+                btn.innerHTML = '🔄 Test Again';
+            }
+        }
+    </script>
+</body>
+</html>

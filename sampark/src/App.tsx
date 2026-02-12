@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AnimatePresence, motion } from "framer-motion";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -24,12 +25,58 @@ function AnimatedRoutes() {
   const location = useLocation();
 
   return (
-    <Routes location={location} key={location.pathname}>
-      <Route path="/" element={<Index />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/verify-otp" element={<VerifyOTP />} />
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Index />
+          </motion.div>
+        } />
+        <Route path="/dashboard" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Dashboard />
+          </motion.div>
+        } />
+        <Route path="/login" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Login />
+          </motion.div>
+        } />
+        <Route path="/signup" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Signup />
+          </motion.div>
+        } />
+        <Route path="/verify-otp" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <VerifyOTP />
+          </motion.div>
+        } />
         
         {/* Admin Routes with persistent layout - Protected */}
         <Route path="/admin" element={
@@ -43,9 +90,19 @@ function AnimatedRoutes() {
           <Route path="analytics" element={<AdminAnalytics />} />
         </Route>
         
-      {/* Catch-all */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        {/* Catch-all */}
+        <Route path="*" element={
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <NotFound />
+          </motion.div>
+        } />
+      </Routes>
+    </AnimatePresence>
   );
 }
 

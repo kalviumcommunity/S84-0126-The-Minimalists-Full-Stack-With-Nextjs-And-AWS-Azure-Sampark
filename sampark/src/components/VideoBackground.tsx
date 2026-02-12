@@ -16,33 +16,28 @@ const VideoBackground = ({ videoSrc, fallbackColor = '#000000' }: VideoBackgroun
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
-      {/* Video Background - Optimized */}
+      {/* Video Background */}
       <video
         ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        preload="metadata"
         className="absolute inset-0 w-full h-full object-cover blur-sm"
         style={{ backgroundColor: fallbackColor }}
-        onLoadedData={(e) => {
-          // Reduce quality for better performance
-          if (e.currentTarget.readyState >= 2) {
-            e.currentTarget.playbackRate = 0.5; // Slower = fewer frames
-          }
-        }}
         onError={(e) => {
           console.error('Video failed to load:', e);
+          // Hide video on error and show fallback
           e.currentTarget.style.display = 'none';
         }}
       >
-        <source src={videoSrc} type="video/mp4" />
+        <source src={`${videoSrc}?v=${Date.now()}`} type="video/mp4" />
+        <source src={`${videoSrc.replace('.mp4', '.webm')}?v=${Date.now()}`} type="video/webm" />
         Your browser does not support the video tag.
       </video>
 
       {/* Overlay for better text readability - balanced for visibility */}
-      <div className="absolute inset-0 bg-black/40 dark:bg-black/60" />
+      <div className="absolute inset-0 bg-black/30 dark:bg-black/50" />
       
       {/* Gradient overlay for smooth fade at bottom */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-50% to-white/90 dark:to-gray-900/90" />

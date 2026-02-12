@@ -5,7 +5,7 @@ import * as THREE from 'three';
 // Minimal Particle System - Theme Aware
 function ParticleWave({ isDark }: { isDark: boolean }) {
   const pointsRef = useRef<THREE.Points>(null);
-  const particleCount = 100; // Reduced for better performance
+  const particleCount = 200; // Significantly reduced for minimal look
 
   const { positions, colors } = useMemo(() => {
     const positions = new Float32Array(particleCount * 3);
@@ -43,8 +43,8 @@ function ParticleWave({ isDark }: { isDark: boolean }) {
       const positions = pointsRef.current.geometry.attributes.position.array as Float32Array;
       const time = state.clock.elapsedTime;
 
-      // Update every 5th particle for better performance
-      for (let i = 0; i < particleCount; i += 5) {
+      // Gentler movement, update every 3rd particle
+      for (let i = 0; i < particleCount; i += 3) {
         const i3 = i * 3;
         const x = positions[i3];
         const y = positions[i3 + 1];
@@ -55,8 +55,8 @@ function ParticleWave({ isDark }: { isDark: boolean }) {
       }
 
       pointsRef.current.geometry.attributes.position.needsUpdate = true;
-      pointsRef.current.rotation.y = time * 0.01; // Slower rotation
-      pointsRef.current.rotation.x = Math.sin(time * 0.06) * 0.03;
+      pointsRef.current.rotation.y = time * 0.015; // Even slower rotation
+      pointsRef.current.rotation.x = Math.sin(time * 0.08) * 0.05;
     }
   });
 
