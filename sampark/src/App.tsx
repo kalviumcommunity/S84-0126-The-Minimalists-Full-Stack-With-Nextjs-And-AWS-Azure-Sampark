@@ -5,19 +5,24 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { lazy, Suspense } from "react";
 
+// Eager load home page for better first contentful paint
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/auth/Login";
-import Signup from "./pages/auth/Signup";
-import VerifyOTP from "./pages/auth/VerifyOTP";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AllGrievances from "./pages/admin/AllGrievances";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminAnalytics from "./pages/admin/AdminAnalytics";
-import AdminLayout from "./components/admin/AdminLayout";
-import AdminRoute from "./components/AdminRoute";
+import LoadingSpinner from "./components/LoadingSpinner";
+
+// Lazy load other pages to reduce initial bundle size
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const Signup = lazy(() => import("./pages/auth/Signup"));
+const VerifyOTP = lazy(() => import("./pages/auth/VerifyOTP"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AllGrievances = lazy(() => import("./pages/admin/AllGrievances"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const AdminRoute = lazy(() => import("./components/AdminRoute"));
 
 const queryClient = new QueryClient();
 
@@ -38,56 +43,82 @@ function AnimatedRoutes() {
           </motion.div>
         } />
         <Route path="/dashboard" element={
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Dashboard />
-          </motion.div>
+          <Suspense fallback={<LoadingSpinner />}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Dashboard />
+            </motion.div>
+          </Suspense>
         } />
         <Route path="/login" element={
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Login />
-          </motion.div>
+          <Suspense fallback={<LoadingSpinner />}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Login />
+            </motion.div>
+          </Suspense>
         } />
         <Route path="/signup" element={
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Signup />
-          </motion.div>
+          <Suspense fallback={<LoadingSpinner />}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Signup />
+            </motion.div>
+          </Suspense>
         } />
         <Route path="/verify-otp" element={
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <VerifyOTP />
-          </motion.div>
+          <Suspense fallback={<LoadingSpinner />}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <VerifyOTP />
+            </motion.div>
+          </Suspense>
         } />
         
         {/* Admin Routes with persistent layout - Protected */}
         <Route path="/admin" element={
-          <AdminRoute>
-            <AdminLayout />
-          </AdminRoute>
+          <Suspense fallback={<LoadingSpinner />}>
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          </Suspense>
         }>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="grievances" element={<AllGrievances />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="dashboard" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminDashboard />
+            </Suspense>
+          } />
+          <Route path="grievances" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AllGrievances />
+            </Suspense>
+          } />
+          <Route path="users" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminUsers />
+            </Suspense>
+          } />
+          <Route path="analytics" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminAnalytics />
+            </Suspense>
+          } />
         </Route>
         
         {/* Catch-all */}
