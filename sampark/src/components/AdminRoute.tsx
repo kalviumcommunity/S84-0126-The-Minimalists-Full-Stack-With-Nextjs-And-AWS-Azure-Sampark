@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import logger from '@/lib/logger';
 
 interface AdminRouteProps {
   children: React.ReactNode;
@@ -24,12 +25,12 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
         }
 
         const data = await res.json();
-        console.log('AdminRoute - User data:', data); // Debug log
+        logger.debug('AdminRoute - User data:', data);
         if (data.user && data.user.role === 'ADMIN') {
-          console.log('AdminRoute - Access granted'); // Debug log
+          logger.info('AdminRoute - Access granted');
           setIsAdmin(true);
         } else {
-          console.log('AdminRoute - Access denied, role:', data.user?.role); // Debug log
+          logger.info('AdminRoute - Access denied, role:', data.user?.role);
           setIsAdmin(false);
         }
       } catch {
