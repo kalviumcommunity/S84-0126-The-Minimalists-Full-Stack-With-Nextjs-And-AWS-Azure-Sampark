@@ -1,499 +1,281 @@
-# Sampark
+# 🏛️ Sampark - Public Grievance Management System
 
-## 🎯 Problem Statement
+A modern, full-stack web application for citizens to report and track civic issues like potholes, waste management, water supply, and more. Built with React, TypeScript, Express, and PostgreSQL.
 
-Urban Local Bodies lack transparent grievance systems. Citizens face difficulty in raising complaints, tracking progress, and ensuring timely resolution with accountability.
+## ✨ Features
 
-## 💡 Solution
+### For Citizens
+- 🎫 **Submit Grievances**: Report civic issues with photos, location, and detailed descriptions
+- 📍 **Location Tracking**: Auto-detect or manually select grievance locations
+- 📷 **Image Upload**: Attach photos to grievances via Cloudinary integration
+- 🔍 **Track Status**: Monitor your grievances with unique tracking IDs
+- 💬 **AI Chatbot**: Get instant answers about grievance submission and tracking
+- 📊 **Dashboard**: View all your submitted grievances and their current status
 
-A cloud-native platform enabling:   
-- 📝 Easy complaint submission with location & media  
-- 📊 Real-time tracking with audit logs  
-- 🎯 Role-based access for officials  
-- 📈 Performance analytics for governance  
+### For Administrators
+- 📈 **Analytics Dashboard**: View statistics and insights on all grievances
+- 👥 **User Management**: Manage registered users
+- 📋 **Grievance Management**: Review, update, and resolve citizen grievances
+- 🔄 **Status Updates**: Change grievance status with comments
+- 🎯 **Priority Management**: Categorize grievances by priority (Low, Medium, High)
 
-## 🧩 Tech Stack
+## 🛠️ Tech Stack
 
-**Frontend**: Next.js 14 (App Router) • Tailwind CSS   
-**Backend**: Next.js API Routes • Prisma ORM • JWT Auth  
-**Database**: PostgreSQL • Redis (caching & rate limiting)  
-**Infrastructure**: Docker • GitHub Actions • AWS/Azure
+### Frontend
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/ui + Radix UI
+- **3D Graphics**: Three.js with React Three Fiber
+- **State Management**: TanStack Query
+- **HTTP Client**: Axios
+- **Form Handling**: React Hook Form + Zod
+- **Routing**: React Router DOM
 
+### Backend
+- **Runtime**: Node.js with TypeScript
+- **Framework**: Express 5
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Caching**: Redis (Upstash)
+- **Authentication**: JWT + bcrypt
+- **File Upload**: Express FileUpload + Cloudinary
+- **AI**: Google Generative AI (Gemini)
 
-## 📅 Sprint Shape (20 Working Days)
-
-### Phase 1: Plan & Design (Days 1–5)  
-- 📐 High-Level Design (HLD) & Low-Level Design (LLD)  
-- 🔧 Repository setup & project board  
-- 📝 Convert goals into actionable GitHub issues  
-- 🎨 Wireframes & mockups  
-- 📊 Database schema design  
-
-### Phase 2: Build & Integrate (Days 6–15)  
-- ⚡ Parallel feature development  
-- 🔄 PR reviews within 24 hours  
-- ✅ CI-driven consistency & quality  
-- 🧪 Continuous testing  
-- 📦 Integration milestones  
-
-### Phase 3: Refine & Deploy (Days 16–19)  
-- 🐛 Debugging & optimization   
-- 🧪 Integration & E2E testing  
-- ☁️ Cloud deployment   
-- 🔒 Security audit  
-- 📊 Performance tuning  
-
-### Phase 4: Showcase (Day 20)  
-- 🎬 Live demo presentation  
-- 👥 Team retrospective  
-- 📚 Documentation finalization  
-
-
-## 👥 Team Structure & Sprint (20 Days)
-
-### MEMBER 1 — Backend, Database & Security Owner  
-Responsibilities:  
-API design & implementation 
-Database schema & migrations   
-Authentication, RBAC & security  
-API testing
-
-Sprint Contribution:  
-
-Days 1–5
-API contracts  
-ER diagram & database schema design  
-
-Days 6–15  
-Complaint CRUD APIs  
-JWT authentication & RBAC  
-Prisma models & migrations  
-Redis integration (caching & rate limiting)
-
-Days 16–19  
-Security hardening  
-Unit & integration testing
-
-Day 20  
-Backend architecture explanation
-
-### MEMBER 2 — Frontend & UX Owner
-Responsibilities
-Citizen-facing UI
-Admin dashboard UI
-App structure & routing
-UX, accessibility & responsiveness
-Sprint Contribution
-
-Days 1–5
-Wireframes & UI flow
-Folder structure & routing plan
-
-Days 6–15
-Complaint submission UI
-Complaint list & status tracking
-Toasts, modals, loading & error states
-
-Days 16–19
-UI polish & responsiveness
-Accessibility & theme refinements
-
-Day 20
-Live demo walkthrough (UI flow)
-
-### MEMBER 3 — DevOps, Cloud & CI/CD Owner
-Responsibilities
-Repository & branching strategy
-Dockerization & environment setup
-CI/CD pipelines
-Cloud deployment & monitoring
-Sprint Contribution
-
-Days 1–5
-Repository setup & branch protection
-PR workflow & CI skeleton
-Environment configuration strategy
-
-Days 6–15
-Docker & Docker Compose setup
-Secrets management
-Cloud database & object storage setup
-
-Days 16–19
-Deployment to AWS / Azure
-Logging & monitoring
-Domain & SSL configuration
-
-Day 20
-Live deployment demo & infra explanation.
+### DevOps
+- **Package Manager**: Bun
+- **Testing**: Vitest
+- **Containerization**: Docker
+- **Linting**: ESLint
 
 
 ## 🚀 Getting Started
 
-### Prerequisites
-Node.js 18+ • Docker • PostgreSQL • Redis • AWS/Azure account
+### 1. Clone the Repository
 
-### Quick Start
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/kalviumcommunity/S84-0126-The-Minimalists-Full-Stack-With-Nextjs-And-AWS-Azure-Sampark.git
-   cd S84-0126-The-Minimalists-Full-Stack-With-Nextjs-And-AWS-Azure-Sampark
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Configure the following:
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/grievance_db"
-   REDIS_URL="redis://localhost:6379"
-   # Configure DATABASE_URL, REDIS_URL, JWT_SECRET, NEXTAUTH_SECRET
-   ```
-
-3. **Start Services & Run**
-   ```bash
-   docker-compose up -d postgres redis
-   npx prisma migrate dev
-   npm run dev
-   ```
-   Visit [http://localhost:3000](http://localhost:3000)
-
-
-## 🔧 Code Quality & Configuration
-
-### TypeScript Strict Mode
-We've enabled strict TypeScript configuration to catch potential errors early and ensure type safety:
-
-**Enabled Compiler Options:**
-- **`strict: true`** - Enables all strict type-checking options
-- **`noImplicitAny: true`** - Prevents using `any` type implicitly, forcing explicit type declarations
-- **`noUnusedLocals: true`** - Reports errors on unused local variables
-- **`noUnusedParameters: true`** - Reports errors on unused function parameters  
-- **`forceConsistentCasingInFileNames: true`** - Ensures consistent file name casing across imports
-
-**Why Strict Mode?**
-- 🐛 Catches bugs at compile-time instead of runtime
-- 📝 Improves code documentation through explicit types
-- 🔍 Makes refactoring safer with better IDE support
-- 👥 Enhances team collaboration with clear contracts
-
-### ESLint & Prettier Configuration
-
-**ESLint Rules:**
-- **`no-console: "warn"`** - Warns about console.log statements (should use proper logging)
-- **`semi: "error"`** - Enforces semicolons at end of statements
-- **`quotes: "error"`** - Enforces double quotes for consistency
-
-**Prettier Settings:**
-- **`singleQuote: false`** - Use double quotes
-- **`semi: true`** - Add semicolons
-- **`tabWidth: 2`** - 2 spaces for indentation
-- **`trailingComma: "es5"`** - Trailing commas where valid in ES5
-
-**Benefits:**
-- ✨ Consistent code formatting across the team
-- 🚫 Prevents common JavaScript pitfalls
-- ⚡ Auto-fixes issues on save
-- 🤝 Reduces code review friction
-
-### Pre-Commit Hooks (Husky + lint-staged)
-
-We use Husky and lint-staged to automatically run ESLint and Prettier before every commit:
-
-**What happens on commit:**
-1. Git detects staged `.ts`, `.tsx`, `.js`, `.jsx` files
-2. Runs `eslint --fix` to auto-fix linting issues
-3. Runs `prettier --write` to format code
-4. If errors remain, commit is blocked until fixed
-
-**Setup:**
 ```bash
-# Husky hooks location
-.husky/pre-commit
-
-# lint-staged configuration in package.json
-"lint-staged": {
-  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"]
-}
-```
-
-**Why Pre-Commit Hooks?**
-- 🛡️ Ensures only quality code reaches the repository
-- 🔄 Maintains consistency automatically
-- 💪 Builds good habits without manual effort
-- 🚀 Speeds up PR reviews
-
-### Testing the Configuration
-
-**Run ESLint manually:**
-```bash
+git clone https://github.com/kalviumcommunity/S84-0126-The-Minimalists-Full-Stack-With-Nextjs-And-AWS-Azure-Sampark.git
 cd sampark
-npx eslint src/ --ext .ts,.tsx
 ```
 
-**Format with Prettier:**
+### 2. Environment Setup
+
+Create `.env` files in both root and backend directories.
+
+#### Root `.env` (Frontend)
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+#### Backend `.env`
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/sampark"
+
+# JWT
+JWT_SECRET=your_super_secret_jwt_key_here
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+# Redis
+REDIS_URL=your_redis_url
+# Or for Upstash Redis:
+UPSTASH_REDIS_REST_URL=your_upstash_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_token
+
+# Google AI
+GEMINI_API_KEY=your_gemini_api_key
+
+# Server
+PORT=3000
+NODE_ENV=development
+```
+
+### 3. Install Dependencies
+
 ```bash
-npx prettier --write "src/**/*.{ts,tsx}"
+# Install root dependencies
+bun install
+
+# Install backend dependencies
+cd backend
+bun install
+cd ..
 ```
 
-**Test pre-commit hook:**
-Try committing code with a lint error - it should auto-fix or block until resolved.
+### 4. Database Setup
 
+```bash
+cd backend
 
----
+# Generate Prisma Client
+bunx prisma generate
 
-## 🌍 Multi-Environment Setup & Secrets Management
+# Run migrations
+bunx prisma migrate dev
 
-### Environment Configuration Strategy
+# (Optional) Seed database
+bunx prisma db seed
 
-This project implements a robust multi-environment setup to ensure reliable deployments ====-[=across development, staging, and production environments.
+cd ..
+```
 
-#### **Environment Files Structure**
+### 5. Run the Application
 
-We maintain separate configuration files for each environment:
+#### Development Mode
+
+Open two terminal windows:
+
+**Terminal 1 - Frontend:**
+```bash
+bun run dev
+```
+
+**Terminal 2 - Backend:**
+```bash
+cd backend
+bun run dev
+```
+
+The application will be available at:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
+
+#### Production Build
+
+```bash
+# Build frontend
+bun run build
+
+# Start backend
+cd backend
+bun run start
+```
+
+## 📁 Project Structure
 
 ```
 sampark/
-├── .env.example          # Template with all variables (tracked in git)
-├── .env.development      # Local development settings (gitignored)
-├── .env.staging          # Staging environment config (gitignored)
-└── .env.production       # Production environment config (gitignored)
+├── backend/                 # Backend Express application
+│   ├── app/api/            # API routes
+│   │   ├── auth/          # Authentication endpoints
+│   │   ├── grievance/     # Grievance management
+│   │   ├── chatbot/       # AI chatbot endpoints
+│   │   ├── admin/         # Admin operations
+│   │   └── upload/        # File upload handling
+│   ├── lib/               # Utility libraries
+│   │   ├── auth.ts        # Auth middleware
+│   │   ├── prisma.ts      # Prisma client
+│   │   └── redis.ts       # Redis client
+│   ├── prisma/            # Database schema & migrations
+│   └── server.ts          # Express server entry point
+├── src/                    # Frontend React application
+│   ├── components/        # React components
+│   │   ├── admin/        # Admin-specific components
+│   │   └── ui/           # Reusable UI components
+│   ├── contexts/         # React contexts
+│   ├── hooks/            # Custom React hooks
+│   ├── lib/              # Utility functions
+│   ├── pages/            # Page components
+│   │   ├── admin/       # Admin pages
+│   │   └── auth/        # Auth pages
+│   └── App.tsx           # Main app component
+└── public/                # Static assets
 ```
 
-**Key Differences Between Environments:**
+## 🎯 Key Features Explained
 
-| Aspect | Development | Staging | Production |
-|--------|-------------|---------|------------|
-| **API URL** | `localhost:3000` | `staging-api.sampark.com` | `api.sampark.com` |
-| **Database** | Local PostgreSQL | Cloud DB (test data) | Cloud DB (live data) |
-| **Redis** | Local Redis | Upstash/Cloud Redis | Upstash/Cloud Redis |
-| **Secrets** | Weak test keys | Strong staging keys | Strong production keys |
-| **Logging** | `debug` (verbose) | `info` | `error` (minimal) |
-| **Rate Limiting** | 1000 req/15min | 100 req/15min | 50 req/15min |
-| **CORS** | All localhost ports | Staging domain only | Production domain only |
+### Grievance Submission Flow
+1. User fills out the grievance form with title, description, and category
+2. Location is captured via geocoding or manual input
+3. Images are uploaded to Cloudinary
+4. Grievance is stored in PostgreSQL with a unique tracking ID
+5. User receives tracking ID for future reference
 
-#### **Build Scripts for Each Environment**
+### Status Tracking
+- **Submitted**: Initial state when grievance is created
+- **Under Review**: Admin has acknowledged the grievance
+- **In Progress**: Work has begun on resolving the issue
+- **Resolved**: Issue has been fixed
+- **Rejected**: Grievance was invalid or duplicate
 
-Environment-specific builds are configured in `package.json`:
+### Admin Workflow
+1. View all grievances in the admin dashboard
+2. Filter by status, category, or priority
+3. Update grievance status with comments
+4. View analytics and user statistics
+
+## 🔒 Authentication
+
+The application uses JWT-based authentication:
+- Tokens are stored in HTTP-only cookies
+- Passwords are hashed using bcrypt
+- Protected routes require valid JWT tokens
+- Role-based access control (USER/ADMIN)
+
+## 📊 Database Schema
+
+### Main Models
+- **User**: Stores user credentials and profile
+- **Grievance**: Main grievance data with location and images
+- **GrievanceStatusHistory**: Tracks status changes over time
+
+## 🤖 AI Chatbot
+
+Powered by Google's Gemini AI, the chatbot can:
+- Answer questions about the grievance process
+- Help users understand how to track their issues
+- Provide information about different grievance categories
+- Guide users through the submission process
+
+## 🧪 Testing
 
 ```bash
-# Development build (local testing)
-npm run build:development
+# Run tests
+bun run test
 
-# Staging build (pre-production testing)
-npm run build:staging
-
-# Production build (live deployment)
-npm run build:production
+# Run tests in watch mode
+bun run test:watch
 ```
 
-Each build command uses the corresponding `.env.[environment]` file and optimizes for that specific environment.
+## 🐳 Docker Deployment
 
----
-
-### 🔐 Secure Secrets Management
-
-**Critical Rule:** Never commit real secrets to the repository!
-
-We implement a multi-layered approach to secrets management:
-
-#### **1. GitHub Secrets (Primary Method)**
-
-All sensitive credentials are stored in GitHub repository secrets and injected during CI/CD:
-
-**Staging Secrets:**
-- `STAGING_DATABASE_URL` - PostgreSQL connection string
-- `STAGING_JWT_SECRET` - JWT signing key
-- `STAGING_REDIS_URL` - Redis connection
-- `STAGING_CLOUDINARY_API_SECRET` - Image upload credentials
-- `STAGING_GOOGLE_AI_API_KEY` - AI chatbot API key
-
-**Production Secrets:**
-- `PRODUCTION_DATABASE_URL` - Production database
-- `PRODUCTION_JWT_SECRET` - Production JWT key
-- `PRODUCTION_REDIS_URL` - Production Redis
-- `PRODUCTION_CLOUDINARY_API_SECRET` - Production upload credentials
-- `PRODUCTION_GOOGLE_AI_API_KEY` - Production AI API key
-
-**Setup Instructions:** See [SECRETS_SETUP.md](SECRETS_SETUP.md) for detailed configuration guide.
-
-#### **2. Alternative: AWS Systems Manager Parameter Store**
-
-For AWS deployments, we can use Parameter Store for centralized secret management:
+Build and run using Docker:
 
 ```bash
-# Store secrets in AWS Parameter Store
-aws ssm put-parameter \
-  --name /sampark/production/database-url \
-  --value "postgresql://..." \
-  --type SecureString
+# Build image
+docker build -t sampark .
 
-# Retrieve in application
-aws ssm get-parameter \
-  --name /sampark/production/database-url \
-  --with-decryption
+# Run container
+docker run -p 5173:5173 -p 3000:3000 sampark
 ```
 
-**Benefits:**
-- ✅ Centralized secret management
-- ✅ Automatic encryption at rest
-- ✅ Fine-grained IAM access control
-- ✅ Audit logging of secret access
-- ✅ Version history and rollback
+## 📝 Available Scripts
 
-#### **3. Alternative: Azure Key Vault**
+### Frontend
+- `bun run dev` - Start development server
+- `bun run build` - Build for production
+- `bun run preview` - Preview production build
+- `bun run lint` - Run ESLint
+- `bun run test` - Run tests
 
-For Azure deployments, we use Azure Key Vault:
+### Backend
+- `bun run dev` - Start development server with hot reload
+- `bun run start` - Start production server
+- `bun run build` - Build frontend from backend
 
-```bash
-# Create and store secrets
-az keyvault secret set \
-  --vault-name sampark-vault \
-  --name database-url \
-  --value "postgresql://..."
+## 📄 License
 
-# Access in application
-az keyvault secret show \
-  --vault-name sampark-vault \
-  --name database-url
-```
+This project is licensed under the MIT License.
+
+## 📧 Contact
+
+For questions or support, please open an issue in the repository.
 
 ---
 
-### 🔒 Security Best Practices Implemented
-
-1. **Environment Isolation**
-   - Separate databases for staging and production
-   - Different API keys per environment
-   - No cross-environment data sharing
-
-2. **Secret Rotation**
-   - JWT secrets changed quarterly
-   - Database credentials rotated regularly
-   - API keys monitored for unusual activity
-
-3. **Access Control**
-   - GitHub Secrets accessible only to CI/CD
-   - AWS/Azure IAM roles follow least privilege
-   - Team members have role-based access
-
-4. **Git Safety**
-   - All `.env*` files in `.gitignore` (except `.env.example`)
-   - Pre-commit hooks prevent accidental commits
-   - No hardcoded secrets in source code
-
-5. **Audit & Monitoring**
-   - GitHub Actions logs all deployments
-   - AWS CloudTrail tracks Parameter Store access
-   - Azure Monitor logs Key Vault operations
-
----
-
-### 🚀 CI/CD Pipeline with Environment Awareness
-
-Our GitHub Actions workflow automatically:
-
-1. **On push to `staging` branch:**
-   - Runs linting and tests
-   - Creates `.env.staging` from GitHub Secrets
-   - Builds staging Docker image
-   - Deploys to staging environment
-   - Accessible at `https://staging.sampark.com`
-
-2. **On push to `main` branch:**
-   - Runs comprehensive tests
-   - Creates `.env.production` from GitHub Secrets
-   - Builds production Docker image (tagged with version)
-   - Deploys to production environment
-   - Accessible at `https://sampark.com`
-
-3. **On pull requests:**
-   - Runs linting and tests only
-   - No deployment occurs
-   - Provides feedback before merge
-
-**Workflow File:** [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
-
----
-
-### 📊 Why Multi-Environment Setup Improves CI/CD Reliability
-
-#### **Benefits We've Achieved:**
-
-1. **Risk Reduction**
-   - Test changes in staging before production
-   - Catch environment-specific bugs early
-   - Prevent production outages from untested code
-
-2. **Parallel Development**
-   - Multiple developers can work without conflicts
-   - Features can be tested independently
-   - Faster iteration cycles
-
-3. **True Production Parity**
-   - Staging mirrors production setup
-   - Same Docker images, different configs
-   - Realistic load and performance testing
-
-4. **Disaster Recovery**
-   - Easy rollback to previous versions
-   - Can promote staging to production quickly
-   - Database migrations tested safely
-
-5. **Compliance & Audit**
-   - Clear separation of test and live data
-   - All deployments logged and traceable
-   - Secrets access is monitored and audited
-
-6. **Developer Productivity**
-   - Local development doesn't affect others
-   - Can experiment freely in dev environment
-   - Clear promotion path: dev → staging → production
-
----
-
-### 🎯 Reflection: Real-World Impact
-
-**What We Learned:**
-
-Implementing multi-environment builds taught us that **configuration is as important as code**. In production systems:
-
-- A single misconfigured environment variable can cause outages
-- Secrets leakage is one of the most common security vulnerabilities
-- Automated, environment-aware deployments reduce human error by 80%
-- Testing in production-like environments catches 60% more bugs
-
-**Challenges We Overcame:**
-
-1. **Challenge:** Managing dozens of environment variables across environments
-   - **Solution:** Created comprehensive `.env.example` as single source of truth
-
-2. **Challenge:** Developers accidentally using production secrets locally
-   - **Solution:** Separate secret namespaces (`STAGING_*` vs `PRODUCTION_*`)
-
-3. **Challenge:** Forgetting to update secrets when rotating credentials
-   - **Solution:** Documented rotation procedures and set calendar reminders
-
-4. **Challenge:** CI/CD failures due to missing environment variables
-   - **Solution:** Validation step in pipeline to check all required vars exist
-
-**Industry Best Practices We Now Follow:**
-
-- ✅ **12-Factor App** methodology for configuration management
-- ✅ **Secrets as a Service** via GitHub Secrets/AWS/Azure
-- ✅ **Immutable Infrastructure** with Docker containers
-- ✅ **GitOps** principles for deployment automation
-- ✅ **Audit Trails** for all secret access and deployments
-
-This setup mirrors production DevOps practices at companies like Netflix, Spotify, and Airbnb. By implementing it early, we've built deployment confidence and reduced the "it works on my machine" problem to zero.
-
----
+Built with ❤️ for better civic engagement
 
