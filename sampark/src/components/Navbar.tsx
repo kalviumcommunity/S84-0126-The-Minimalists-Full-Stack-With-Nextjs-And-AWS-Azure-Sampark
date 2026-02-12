@@ -98,10 +98,12 @@ const Navbar: React.FC = () => {
           ? "bg-white/95 dark:bg-[#00171f]/95 backdrop-blur-xl border-b border-gray-200 dark:border-[#007ea7]/20 shadow-xl py-3" 
           : "bg-transparent py-5"
       }`}
+      role="navigation"
+      aria-label="Main navigation"
     >
       <div className="section-container flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2" aria-label="Sampark home">
           <img src="/logo.png" alt="Sampark Logo" className="w-10 h-10 rounded-xl object-contain" />
           <span className="font-display font-bold text-xl text-gray-900 dark:text-white">Sampark</span>
         </Link>
@@ -278,6 +280,9 @@ const Navbar: React.FC = () => {
           <button
             className="p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? <X className="text-foreground" /> : <Menu className="text-foreground" />}
           </button>
@@ -289,10 +294,12 @@ const Navbar: React.FC = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             className="lg:hidden nav-blur border-t"
+            role="menu"
           >
             <div className="section-container py-6 flex flex-col gap-4">
               {!isLoggedIn &&
